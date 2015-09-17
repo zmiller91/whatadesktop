@@ -40,7 +40,7 @@
 
 </head>
 
-<body id="page-top" ng-app="myApp" ng-controller="myCtrl">
+<body id="page-top" ng-app="myApp" ng-controller="myCtrl" resize>
 
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
 
@@ -59,13 +59,19 @@
 
             </div>
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="page-scroll"  ng-click='' ng-show="!queue">Requeue</a>
+                </li>
                 
                 <li>
-                    <a  ng-click='save()'>Save</a>
+                    <a class="page-scroll"  ng-click='save()'>Save</a>
                 </li>
                 
                 <li>
                     <a class="page-scroll" ng-click='delete()'>Remove</a>
+                </li>
+                <li>
+                    <a class="page-scroll"  ng-click='' ng-show="!queue">Exit</a>
                 </li>
                 
                 <li>
@@ -83,10 +89,10 @@
                       <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Queues
                       <span class="caret"></span></button>
                       <ul class="dropdown-menu">
-                        <li><a>Random</a></li>
-                        <li><a>New</a></li>
-                        <li><a>Popular</a></li>
-                        <li><a>Unpopular</a></li>
+                        <li><a ng-click="queue = true">Random</a></li>
+                        <li><a ng-click="queue = true">New</a></li>
+                        <li><a ng-click="queue = true">Popular</a></li>
+                        <li><a ng-click="queue = true">Unpopular</a></li>
                       </ul>
                     </div>
                 </li>
@@ -96,8 +102,8 @@
                       <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">User
                       <span class="caret"></span></button>
                       <ul class="dropdown-menu">
-                        <li><a>Saved</a></li>
-                        <li><a>Deleted</a></li>
+                        <li><a ng-click="queue = false">Saved</a></li>
+                        <li><a ng-click="queue = false">Deleted</a></li>
                       </ul>
                     </div>
                 </li>
@@ -107,12 +113,36 @@
         <!-- /.container-fluid -->
     </nav>
 
-    <header  style="background-image: url({{image.path}}); background-size: {{width}}px {{height}}px; background-repeat: no-repeat; background-position: center;"  resize>
+    <header ng-show="queue" style="background-image: url({{image.path}}); background-size: {{width}}px {{height}}px; background-repeat: no-repeat; background-position: center;">
         <div data-slide="next" href="" class="left-nav col-md-1" ng-click="next()"></div>
         <div class="col-md-10"></div>
         <div data-slide="next" href="" class="right-nav col-md-1" ng-click="previous()"></div>
     </header>
-
+    
+    <div class = "container tile-view" ng-show="!queue" style="width: {{ numTileCols * tileWidth }}px">
+        <div class="row" ng-repeat="row in rows">
+            <div class="col-md-{{colsize}}" ng-repeat="img in row" >
+                <img class="tile" src="{{img.path}}" 
+                    style="width: {{img.tileWidth}}px; 
+                    height: {{img.tileHeight}}px;
+                    margin-top: {{5 + (tileHeight - img.tileHeight) / 2}}px;
+                    margin-bottom: {{5 + (tileHeight - img.tileHeight) / 2}}px;
+                    margin-left: {{5 + (tileWidth - img.tileWidth) / 2}}px;
+                    margin-right: {{5 + (tileWidth - img.tileWidth) / 2}}px;" 
+                    ng-click="enlarge(img.id)"
+                    />
+            </div>
+    </div>
+    
+    
+    <!-- Define Responsive Image Tiles: For Best Effect Use Square Images and a lot more Images -->
+<!--   <div class="gridWrapper">
+    <div class="tile" ng-repeat="obj in objects" style="background-image: url({{obj[0].path}}); background-size: 320px 180px; background-repeat: no-repeat; background-position: center;">
+      <div class="tileInner">
+        <img src="{{obj[0].path}}" />
+      </div>
+    </div>
+</div>-->
     <!-- jQuery -->
 <!--    <script src="js/jquery.js"></script>-->
 

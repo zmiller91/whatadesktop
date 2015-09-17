@@ -1,7 +1,65 @@
+/* CSS */
+.gridWrapper {
+      overflow: hidden;
+      margin: 5px;
+}
+
+/* centered columns styles */
+.row-centered {
+    text-align:center;
+}
+.col-centered {
+    display:inline-block;
+    float:none;/* reset the text-align */
+    text-align:left;/* inline-block space fix */
+    margin-right: 5px;
+}
+
+.tile-view{
+    margin-top: 55px;
+}
+
+.tile {
+/* float: left; */
+      /* position: relative; */
+      /* width: 320px; */
+      height:  180px;/* padding-bottom: 15%; */
+    /* margin-left: 15px; */padding: 5px;}
+.tileInner {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      top: 10px;
+      bottom: 10px;
+      overflow: hidden;
+    }
+.tileInner img {
+      width: 100%;
+    }
+/*Media Query to Adapt Screen to iPhone*/
+@media only screen and (max-width : 320px) {
+    .tile {
+        width: 100%;
+        padding-bottom: 100%;
+      }
+}
+/*Media Query to Adapt Screen to iPhone Retina*/
+@media only screen and (max-width : 640px) {
+    .box {
+        width: 50%;
+        padding-bottom: 50%;
+      }
+}
+
+
 /* carousel */
 
 body {
     background: #202020;
+}
+
+.dropdown-menu{
+    
 }
 
 #mainNav

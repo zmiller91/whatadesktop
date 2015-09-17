@@ -10,6 +10,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.width = 0;
     $scope.height = 0;
     $scope.resolutions = [];
+    $scope.queue = true;
         
     function changeImage(){
         console.log('width: ' + window.innerWidth);
@@ -44,6 +45,11 @@ app.controller('myCtrl', function($scope, $http) {
         });
     }
     
+    $scope.enlarge = function(id){
+        $scope.image = $scope.objects[id][0];
+        $scope.queue = true;
+    }
+    
 
 
    $http.get('background.php').
@@ -64,11 +70,17 @@ app.controller('myCtrl', function($scope, $http) {
 
 app.directive('resize', function ($window) {
     return function (scope, element) {
+        scope.colsize = 1;
+        scope.rows = [];
+        scope.tileInfo = {};
+        scope.tileWidth = 320;
+        scope.tileHeight = 180;
+        scope.numTileCols = 0;
         
-        scope.setDimensions = function(img){
-            
+        scope.getImageDimensions = function(img, width, height){
+        
             //get the dimensions
-            var window = scope.getWindowDimensions();
+            var window = {w: width, h: height};
             var iImgWidth = parseInt(img.width);
             var iImgHeight = parseInt(img.height);
             
@@ -103,8 +115,49 @@ app.directive('resize', function ($window) {
                 }
             }
             
-            scope.width = iImgWidth;
-            scope.height = iImgHeight;
+            return {w: iImgWidth, h: iImgHeight};
+        }
+        
+        scope.setDimensions = function(img){
+            var winDim = scope.getWindowDimensions()
+            var imgDim = scope.getImageDimensions(img, winDim.w, winDim.h);
+            scope.width = imgDim.w;
+            scope.height = imgDim.h;
+        }
+        
+        scope.setTileDimensions = function(objects){
+            var dim = scope.getWindowDimensions();
+            var room = Math.floor(dim.w / 350);
+            var numcols = Math.min(room, 12);
+            
+            
+            while(12 % numcols !== 0){
+                numcols -= 1;
+            }
+            scope.numTileCols = numcols;
+            scope.colsize = 12 / numcols;
+            var tiles = [];
+            var row = [];
+
+            for(var i = 1; i <= objects.length; i++){
+                
+                var img = objects[i - 1][0];
+                var rowHeight = scope.tileHeight;
+                var colWidth = scope.tileWidth;
+                var imgDim = scope.getImageDimensions(img, colWidth, rowHeight);
+                img['tileWidth'] = imgDim.w;
+                img['tileHeight'] = imgDim.h;
+                img['id'] = i - 1;
+
+                row.push(img);
+                if(i % numcols === 0){
+                    tiles.push(row);
+                    row = [];
+                }
+            }
+
+            scope.colsize = 12 / numcols;
+            scope.rows = tiles;
         }
         
         
@@ -127,6 +180,7 @@ app.directive('resize', function ($window) {
             };
             
             scope.setDimensions(scope.image);
+            scope.setTileDimensions(scope.objects);
 
         }, true);
 
@@ -137,5 +191,7 @@ app.directive('resize', function ($window) {
         //Adjusts the image to fit the screen without overflowing and without
         //losing aspect ratio
         scope.$watchCollection("image", scope.setDimensions);
+        
+        scope.$watchCollection("objects", scope.setTileDimensions);
     }
 })
