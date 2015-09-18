@@ -60,22 +60,24 @@
             </div>
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a class="page-scroll"  ng-click='' ng-show="!queue">Requeue</a>
+                    <a class="page-scroll"  ng-click='' ng-show="enlarged">Requeue</a>
                 </li>
                 
                 <li>
-                    <a class="page-scroll"  ng-click='save()'>Save</a>
+                    <a class="page-scroll" ng-show="!image.saved && ((queue && !enlarged) || (deleted && enlarged))" ng-click="save()">Save</a>
+                    <a class="page-scroll" ng-show="image.saved && ((queue && !enlarged) || (deleted && enlarged))">Saved</a>
                 </li>
                 
                 <li>
-                    <a class="page-scroll" ng-click='delete()'>Remove</a>
+                    <a class="page-scroll" ng-show="!image.removed && (queue && !enlarged) || (saved && enlarged)" ng-click="delete()">Remove</a>
+                    <a class="page-scroll" ng-show="image.removed && (queue && !enlarged) || (saved && enlarged)">Removed</a>
                 </li>
                 <li>
-                    <a class="page-scroll"  ng-click='' ng-show="!queue">Exit</a>
+                    <a class="page-scroll"  ng-click="exitEnlarged()" ng-show="enlarged">Exit</a>
                 </li>
                 
                 <li>
-                    <div class="dropdown">
+                    <div ng-show="queue || enlarged" class="dropdown">
                       <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Download
                       <span class="caret"></span></button>
                       <ul class="dropdown-menu">
@@ -89,10 +91,10 @@
                       <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Queues
                       <span class="caret"></span></button>
                       <ul class="dropdown-menu">
-                        <li><a ng-click="queue = true">Random</a></li>
-                        <li><a ng-click="queue = true">New</a></li>
-                        <li><a ng-click="queue = true">Popular</a></li>
-                        <li><a ng-click="queue = true">Unpopular</a></li>
+                        <li><a ng-click="queueView(); getBackgrounds({sort: 'random'});">Random</a></li>
+                        <li><a ng-click="queueView(); getBackgrounds({sort: 'new'});">New</a></li>
+                        <li><a ng-click="queueView(); getBackgrounds({sort: 'popular'});">Popular</a></li>
+                        <li><a ng-click="queueView(); getBackgrounds({sort: 'unpopular'});">Unpopular</a></li>
                       </ul>
                     </div>
                 </li>
@@ -102,8 +104,8 @@
                       <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">User
                       <span class="caret"></span></button>
                       <ul class="dropdown-menu">
-                        <li><a ng-click="queue = false">Saved</a></li>
-                        <li><a ng-click="queue = false">Deleted</a></li>
+                        <li><a ng-click="savedView(); getBackgrounds({sort: 'saved'});">Saved</a></li>
+                        <li><a ng-click="deletedView(); getBackgrounds({sort: 'deleted'});">Deleted</a></li>
                       </ul>
                     </div>
                 </li>
@@ -126,10 +128,11 @@
                     style="width: {{img.tileWidth}}px; 
                     height: {{img.tileHeight}}px;
                     margin-top: {{5 + (tileHeight - img.tileHeight) / 2}}px;
-                    margin-bottom: {{5 + (tileHeight - img.tileHeight) / 2}}px;
+                    margin-bottom: {{(tileHeight - img.tileHeight) / 2}}px;
                     margin-left: {{5 + (tileWidth - img.tileWidth) / 2}}px;
-                    margin-right: {{5 + (tileWidth - img.tileWidth) / 2}}px;" 
-                    ng-click="enlarge(img.id)"
+                    margin-right: {{5 + (tileWidth - img.tileWidth) / 2}}px;
+                    cursor: pointer;" 
+                    ng-click="enlarged = true; enlarge(img.id)"
                     />
             </div>
     </div>

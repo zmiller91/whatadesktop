@@ -50,7 +50,8 @@ $conn = Connection::getConnection('ima_user', 'fotbaltym9');
 execute($conn,
 <<<EOD
     UPDATE images
-    SET saved = 1
+    SET saved = 1,
+    deleted = 0
     WHERE root = "{$_GET['root']}";
 EOD
 );

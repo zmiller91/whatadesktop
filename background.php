@@ -53,26 +53,86 @@ function execute($conn, $strQuery){
 }
     
 $conn = Connection::getConnection('ima_user', 'fotbaltym9');
-$aFileHashes = execute($conn,
+$base =
 <<<EOD
-    SELECT DISTINCT root FROM images
-    WHERE deleted = 0
-    AND saved = 0
-    ORDER BY RAND()
-    LIMIT 100;
-EOD
-);
+         SELECT DISTINCT root FROM images
+EOD;
+
+$filter = "";
+switch($_GET['sort']){
+    
+    case "new":
+        $filter =
+<<<EOD
+        WHERE deleted != 1
+        AND saved != 1
+        ORDER BY id DESC
+        LIMIT 100;
+EOD;
+        break;
+    
+    case "popular":
+        $filter =
+<<<EOD
+        WHERE saved >= 0
+        AND deleted <= 0
+        ORDER BY saved DESC
+        LIMIT 100;
+EOD;
+        break;
+    
+    case "unpopular":
+        $filter =
+<<<EOD
+        WHERE deleted > 0
+        ORDER BY deleted DESC
+        LIMIT 100;
+EOD;
+        break;
+    
+    case "random":
+        $filter =
+<<<EOD
+        WHERE deleted != 1
+        AND saved != 1
+        ORDER BY RAND()
+        LIMIT 100;
+EOD;
+        $shuffle = true;
+        break;
+    
+    case "saved":
+        $filter =
+<<<EOD
+        WHERE saved = 1;
+EOD;
+        break;
+    
+    case "deleted":
+        $filter =
+<<<EOD
+        WHERE deleted = 1;
+EOD;
+        break;
+}
+
+$roots = $base . $filter;
+$aFileHashes = execute($conn, $roots);
+
+if(empty($aFileHashes)){
+    return json_encode(array());
+}
 
 $sqlIn = generateIn('root', $aFileHashes);
 $aImages = execute($conn,
 <<<EOD
-        SELECT id, path, width, height, root FROM IMAGES
+        SELECT id, path, width, height, root, saved, deleted FROM IMAGES
         WHERE root in
         {$sqlIn}
-        ORDER BY root, height DESC, width DESC
+        ORDER BY root, width DESC, height DESC;
 EOD
 );
-
+           
 $aRootIndex = array();  
 $aOut = array();
 
@@ -90,5 +150,4 @@ foreach($aImages as $img){
     $aRootIndex[$img['root']] = $index;
 }
 
-        
 echo json_encode($aOut);

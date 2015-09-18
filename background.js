@@ -10,14 +10,48 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.width = 0;
     $scope.height = 0;
     $scope.resolutions = [];
+    
     $scope.queue = true;
+    $scope.enlarged = false;
+    $scope.saved = false;
+    $scope.deleted = false;
         
     function changeImage(){
         console.log('width: ' + window.innerWidth);
         console.log('height: ' + window.innerHeight);
         
         $scope.image = $scope.objects[0][0];
+        $scope.image['saved'] = $scope.objects[0]['saved'];
         $scope.resolutions = $scope.objects[0];
+    }
+    
+    //activate queue view
+    $scope.queueView = function(){
+        $scope.queue = true;
+        $scope.deleted = false;
+        $scope.saved = false;
+        $scope.enlarged = false;
+    }
+    
+    //activate saved view
+    $scope.savedView = function(){
+        $scope.saved = true;
+        $scope.deleted = false;
+        $scope.queue = false;
+        $scope.enlarged = false;
+    }
+    //activate deleted view
+    $scope.deletedView = function(){
+        $scope.deleted = true;
+        $scope.saved = false;
+        $scope.queue = false;
+        $scope.enlarged = false;
+    }
+    
+    //exit enlarged view
+    $scope.exitEnlarged = function(){
+        $scope.enlarged = false; 
+        $scope.queue = false;
     }
     
     $scope.next = function(){
@@ -33,11 +67,20 @@ app.controller('myCtrl', function($scope, $http) {
     }
     
     $scope.delete = function(){
-        var deleted = $scope.objects.shift();
-        var previous = $scope.objects.pop();
-        $scope.objects.unshift(previous);
-        var root = deleted[0]['root'];
-        changeImage();
+        
+        if($scope.enlarged){
+            var root = $scope.image['root'];
+            $scope.objects.splice($scope.image.id, 1);
+            $scope.exitEnlarged();
+            
+        }else{
+            var deleted = $scope.objects.shift();
+            var previous = $scope.objects.pop();
+            $scope.objects.unshift(previous);
+            var root = deleted[0]['root'];
+            changeImage();
+        }
+        
         $http.get('delete.php?root=' + root).
             then(function(response) {}, 
             function(response) {
@@ -45,26 +88,54 @@ app.controller('myCtrl', function($scope, $http) {
         });
     }
     
+    $scope.save = function(){
+        
+        var root = $scope.image['root'];
+        if($scope.enlarged){
+            $scope.objects.splice($scope.image.id, 1);
+            $scope.exitEnlarged();
+        }
+        
+        $http.get('save.php?root=' + root).
+            then(function(resonse) {
+                $scope.image['saved'] = true;
+                $scope.objects[0]['saved'] = true;
+            }, 
+            function(response) {
+              console.log(response);
+        });
+    }
+    
     $scope.enlarge = function(id){
         $scope.image = $scope.objects[id][0];
+        $scope.resolutions = $scope.objects[id];
         $scope.queue = true;
+        $scope.enlarged = true;
     }
     
 
+    $scope.getBackgrounds = function(params){
+        
+        //should have a loading wheel here...
+        $scope.objects = [];
+        $scope.image = [];
+        $http.get('background.php', {params: params}).
+                
+            then(function(response) {
+             $scope.objects = response['data'];
+              if($scope.objects.length > 0){
+                  changeImage();
+              }
+                
+            }, function(response) {
+                console.log(response);
+                return null;
+            });
+    }
 
-   $http.get('background.php').
-       then(function(response) {
-         // this callback will be called asynchronously
-         // when the response is available
-         $scope.objects = response['data'];
-         if($scope.objects.length > 0){
-             changeImage();
-         }
 
-
-       }, function(response) {
-         console.log(response);
-       });
+    $scope.getBackgrounds({sort: 'random'});
+  
   
 });
 
@@ -154,6 +225,11 @@ app.directive('resize', function ($window) {
                     tiles.push(row);
                     row = [];
                 }
+            }
+
+            if(row.length > 0){
+                tiles.push(row);
+                row = [];
             }
 
             scope.colsize = 12 / numcols;
