@@ -12,17 +12,24 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.resolutions = [];
     
     $scope.queue = true;
+    $scope.queueIndex = 0;
     $scope.enlarged = false;
     $scope.saved = false;
     $scope.deleted = false;
         
     function changeImage(){
-        console.log('width: ' + window.innerWidth);
-        console.log('height: ' + window.innerHeight);
         
-        $scope.image = $scope.objects[0][0];
-        $scope.image['saved'] = $scope.objects[0]['saved'];
-        $scope.resolutions = $scope.objects[0];
+        $scope.image = $scope.objects[$scope.queueIndex][0];
+        $scope.resolutions = $scope.objects[$scope.queueIndex];
+        
+        $scope.image.saved = 
+                ($scope.image.saved === true ||$scope.image.saved == 1) 
+                ? true 
+                : false;
+        $scope.image.deleted = 
+                ($scope.image.deleted === true || $scope.image.deleted == 1)
+                ? true 
+                : false;
     }
     
     //activate queue view
@@ -31,7 +38,7 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.deleted = false;
         $scope.saved = false;
         $scope.enlarged = false;
-    }
+    };
     
     //activate saved view
     $scope.savedView = function(){
@@ -39,81 +46,104 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.deleted = false;
         $scope.queue = false;
         $scope.enlarged = false;
-    }
+    };
+    
     //activate deleted view
     $scope.deletedView = function(){
         $scope.deleted = true;
         $scope.saved = false;
         $scope.queue = false;
         $scope.enlarged = false;
-    }
+    };
     
     //exit enlarged view
     $scope.exitEnlarged = function(){
         $scope.enlarged = false; 
         $scope.queue = false;
-    }
+    };
     
+    //go to next image
     $scope.next = function(){
-        var old = $scope.objects.shift();
-        $scope.objects.push(old);
+        $scope.queueIndex = $scope.queueIndex + 1 >= $scope.objects.length ?
+            0:
+            $scope.queueIndex + 1;
         changeImage();
-    }
+    };
     
+    //go to previous image
     $scope.previous = function(){
-        var old = $scope.objects.pop();
-        $scope.objects.unshift(old);
+        $scope.queueIndex = $scope.queueIndex - 1 >= 0 ?
+            $scope.queueIndex - 1:
+            $scope.objects.length - 1;
+        changeImage();
+    };
+    
+    function removeFromQueue(){
+        $scope.objects.splice($scope.queueIndex, 1);
+        $scope.queueIndex = $scope.queueIndex >= $scope.objects.length ?
+            0 :
+            $scope.queueIndex;
         changeImage();
     }
     
+    //delete image
     $scope.delete = function(){
         
+        var root = $scope.image.root;
         if($scope.enlarged){
-            var root = $scope.image['root'];
-            $scope.objects.splice($scope.image.id, 1);
             $scope.exitEnlarged();
-            
-        }else{
-            var deleted = $scope.objects.shift();
-            var previous = $scope.objects.pop();
-            $scope.objects.unshift(previous);
-            var root = deleted[0]['root'];
-            changeImage();
         }
-        
+        removeFromQueue();
         $http.get('delete.php?root=' + root).
             then(function(response) {}, 
             function(response) {
               console.log(response);
         });
-    }
+    };
     
+    //save image
     $scope.save = function(){
         
         var root = $scope.image['root'];
         if($scope.enlarged){
-            $scope.objects.splice($scope.image.id, 1);
             $scope.exitEnlarged();
+            removeFromQueue();
         }
         
         $http.get('save.php?root=' + root).
-            then(function(resonse) {
-                $scope.image['saved'] = true;
+            then(function(response) {
+                $scope.image.saved = true;
+                $scope.image.deleted = false;
                 $scope.objects[0]['saved'] = true;
+                $scope.objects[0]['deleted'] = false;
+            }, 
+            function(response) {
+              console.log(response);
+        });
+    };
+    
+    $scope.requeue = function(){
+        var root = $scope.image['root'];
+        $scope.exitEnlarged();
+        removeFromQueue();
+        
+        $http.get('requeue.php?root=' + root).
+            then(function(response) {
             }, 
             function(response) {
               console.log(response);
         });
     }
     
+    //enlarge thumbnail
     $scope.enlarge = function(id){
-        $scope.image = $scope.objects[id][0];
-        $scope.resolutions = $scope.objects[id];
+        $scope.queueIndex = id;
+        changeImage();
         $scope.queue = true;
         $scope.enlarged = true;
-    }
+    };
     
-
+    //get backgrounds from db
     $scope.getBackgrounds = function(params){
         
         //should have a loading wheel here...
@@ -131,9 +161,9 @@ app.controller('myCtrl', function($scope, $http) {
                 console.log(response);
                 return null;
             });
-    }
+    };
 
-
+    //should probably be on window.ready
     $scope.getBackgrounds({sort: 'random'});
   
   
@@ -187,14 +217,14 @@ app.directive('resize', function ($window) {
             }
             
             return {w: iImgWidth, h: iImgHeight};
-        }
+        };
         
         scope.setDimensions = function(img){
-            var winDim = scope.getWindowDimensions()
+            var winDim = scope.getWindowDimensions();
             var imgDim = scope.getImageDimensions(img, winDim.w, winDim.h);
             scope.width = imgDim.w;
             scope.height = imgDim.h;
-        }
+        };
         
         scope.setTileDimensions = function(objects){
             var dim = scope.getWindowDimensions();
@@ -234,7 +264,7 @@ app.directive('resize', function ($window) {
 
             scope.colsize = 12 / numcols;
             scope.rows = tiles;
-        }
+        };
         
         
         var w = angular.element($window);
@@ -269,5 +299,5 @@ app.directive('resize', function ($window) {
         scope.$watchCollection("image", scope.setDimensions);
         
         scope.$watchCollection("objects", scope.setTileDimensions);
-    }
-})
+    };
+});

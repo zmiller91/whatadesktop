@@ -60,7 +60,7 @@
             </div>
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a class="page-scroll"  ng-click='' ng-show="enlarged">Requeue</a>
+                    <a class="page-scroll"  ng-click='requeue()' ng-show="enlarged">Requeue</a>
                 </li>
                 
                 <li>
@@ -69,8 +69,8 @@
                 </li>
                 
                 <li>
-                    <a class="page-scroll" ng-show="!image.removed && (queue && !enlarged) || (saved && enlarged)" ng-click="delete()">Remove</a>
-                    <a class="page-scroll" ng-show="image.removed && (queue && !enlarged) || (saved && enlarged)">Removed</a>
+                    <a class="page-scroll" ng-show="!image.deleted && ((queue && !enlarged) || (saved && enlarged))" ng-click="delete()">Remove</a>
+                    <a class="page-scroll" ng-show="image.deleted && ((queue && !enlarged) || (saved && enlarged))">Removed</a>
                 </li>
                 <li>
                     <a class="page-scroll"  ng-click="exitEnlarged()" ng-show="enlarged">Exit</a>
@@ -81,7 +81,7 @@
                       <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Download
                       <span class="caret"></span></button>
                       <ul class="dropdown-menu">
-                        <li><a ng-repeat="res in resolutions" href="{{res.path}}"  target="_blank">{{res.width}}x{{res.height}}</a></li>
+                        <li><a ng-repeat="res in resolutions" href="{{res.path}}" download="" target="_blank">{{res.width}}x{{res.height}}</a></li>
                       </ul>
                     </div>
                 </li>
@@ -116,9 +116,9 @@
     </nav>
 
     <header ng-show="queue" style="background-image: url({{image.path}}); background-size: {{width}}px {{height}}px; background-repeat: no-repeat; background-position: center;">
-        <div data-slide="next" href="" class="left-nav col-md-1" ng-click="next()"></div>
+        <div data-slide="next" href="" class="left-nav col-md-1" ng-click="previous()"></div>
         <div class="col-md-10"></div>
-        <div data-slide="next" href="" class="right-nav col-md-1" ng-click="previous()"></div>
+        <div data-slide="next" href="" class="right-nav col-md-1" ng-click="next()"></div>
     </header>
     
     <div class = "container tile-view" ng-show="!queue" style="width: {{ numTileCols * tileWidth }}px">
