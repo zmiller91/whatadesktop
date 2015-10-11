@@ -62,23 +62,12 @@
                 </div>
             </form>
             <div class="error-container">
-                <small class="error" ng-show="register.username.$dirty && register.username.$error.required">Please input a username</small>
+                <small ng-cloak class="error" ng-show="register.username.$dirty && register.username.$error.required">Please input a username</small>
             </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary">Cancel</button>
             <button type="button" class="btn btn-primary" ng-click="submit()">Submit</button>
-        </div>
-    </script>
-    
-    <script type="text/ng-template" id="ErrorModal.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Errors</h3>
-        </div>
-        <div class="modal-body" ng-bind-html-unsafe="error">
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Cancel</button>
         </div>
     </script>
 
@@ -104,20 +93,20 @@
                 </li>
                 
                 <li>
-                    <a class="page-scroll" ng-show="!image.saved && ((queue && !enlarged) || (deleted && enlarged))" ng-click="save()">Save</a>
-                    <a class="page-scroll" ng-show="image.saved && ((queue && !enlarged) || (deleted && enlarged))">Saved</a>
+                    <a ng-cloak class="page-scroll" ng-show="!image.saved && ((queue && !enlarged) || (deleted && enlarged))" ng-click="save()">Save</a>
+                    <a ng-cloak class="page-scroll" ng-show="image.saved && ((queue && !enlarged) || (deleted && enlarged))">Saved</a>
                 </li>
                 
                 <li>
-                    <a class="page-scroll" ng-show="!image.deleted && ((queue && !enlarged) || (saved && enlarged))" ng-click="delete()">Remove</a>
-                    <a class="page-scroll" ng-show="image.deleted && ((queue && !enlarged) || (saved && enlarged))">Removed</a>
+                    <a ng-cloak class="page-scroll" ng-show="!image.deleted && ((queue && !enlarged) || (saved && enlarged))" ng-click="delete()">Remove</a>
+                    <a ng-cloak class="page-scroll" ng-show="image.deleted && ((queue && !enlarged) || (saved && enlarged))">Removed</a>
                 </li>
                 <li>
-                    <a class="page-scroll"  ng-click="exitEnlarged()" ng-show="enlarged">Exit</a>
+                    <a ng-cloak class="page-scroll"  ng-click="exitEnlarged()" ng-show="enlarged">Exit</a>
                 </li>
                 
                 <li>
-                    <div ng-show="queue || enlarged" class="dropdown">
+                    <div ng-cloak ng-show="queue || enlarged" class="dropdown">
                       <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Download
                       <span class="caret"></span></button>
                       <ul class="dropdown-menu">
