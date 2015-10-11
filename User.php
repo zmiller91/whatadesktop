@@ -36,7 +36,8 @@ class User {
         
         //create user and login
         if(!$this->oUserTable->getUser($strUser)){
-            $this->oUserTable->createUser($strUser, $strPass);
+            $strHashedPass = $this->hashPassword($strPass);
+            $this->oUserTable->createUser($strUser, $strHashedPass);
             $this->logIn($strUser, $strPass);
            
         //user exists
@@ -49,7 +50,7 @@ class User {
     
     public function logIn($strUser, $strPass, $bKeepLoggedIn = false){
 
-        $strHashedPass = $this->hashPassword($strPass);
+        $strEncodedPass = $this->encode($strPass);
         $oUserCreds = $this->oUserTable->getUser($strUser);
         
         //user doesn't exist
@@ -59,7 +60,7 @@ class User {
             return $this->bLoggedIn;
         }
         
-        $bVerified = password_verify($oUserCreds['password'], $strHashedPass);     
+        $bVerified = password_verify($strEncodedPass, $oUserCreds['password']);     
         if($bVerified){
             
             //create new session and set cookie 
@@ -74,7 +75,7 @@ class User {
                             $strExpiration, 
                             $bKeepLoggedIn);
             
-            $this->setCookie($strUser, $strSelector, $strToken);
+            $this->setCookie($this->strUser, $strSelector, $strToken);
             $this->bLoggedIn = true;
             return $this->bLoggedIn;
             
@@ -104,7 +105,7 @@ class User {
         }
 
         //all cookie fields must exist
-        list($strUser, $strSelector, $strToken) = explode($strCookie, ':');
+        list($strUser, $strSelector, $strToken) = explode(':', $strCookie, 3);
         if(empty($strUser) || empty($strSelector) || empty($strToken)){
             $this->bLoggedIn = false;
             return $this->bLoggedIn;
@@ -121,7 +122,7 @@ class User {
             }
             
             //authenticated, generate new token and set new cookie
-            if(password_verify($oUserSession['token'], $strToken)){
+            if($oUserSession['token'] === $strToken){
                 
                 $this->strUser = $strUser;
                 $strNewToken = $this->generateToken();
@@ -157,7 +158,7 @@ class User {
     }
     
     private function generateToken(){
-        return openssl_random_pseudo_bytes(256, true);
+        return bin2hex(openssl_random_pseudo_bytes(60));
     }
     
     private function setCookie($strUser, $strSelector, $strToken){

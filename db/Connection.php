@@ -16,7 +16,7 @@ class Connection {
     
     private function __construct($user, $password) {
         $this->conn = new mysqli("localhost", $user, $password);
-        $this->conn->select_db("website");
+        $this->conn->select_db("backgrounds");
         if ($this->conn->connect_error){
             die("Connection failed because: " . $this->conn->connect_error);
         }

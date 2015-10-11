@@ -29,7 +29,7 @@ class BaseTable {
         
         //If there's an error in the query then die
         if(!$result){
-            die("Query: $strQuery, Error: ");
+            throw new Exception("Query: $strQuery, Error: ");
         }
         
         //If there is a mysqli_result then return it

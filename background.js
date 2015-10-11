@@ -1,5 +1,5 @@
-var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope, $http) {
+var app = angular.module('myApp', ['ngAnimate', 'ui.bootstrap']);
+app.controller('myCtrl', function($scope, $http, $uibModal) {
     
     $scope.objects = [];
     $scope.image = {
@@ -17,9 +17,54 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.saved = false;
     $scope.deleted = false;
         
+    function openErrorModal(strErrorHtml) {
+
+        var modalInstance = $uibModal.open({
+            templateUrl: 'ErrorModal.html',
+            controller: 'ErrorModalCtrl',
+            size: 'lg',
+            resolve: {
+                error: function () {
+                    return strErrorHtml;
+                }
+            }
+        });
+
+        modalInstance.result.then(function () {
+        }, function () {
+            console.log('Modal dismissed at: ' + new Date());
+        });
+    };
+        
+    $scope.open = function () {
+
+        var modalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'myModalContent.html',
+            controller: 'ModalInstanceCtrl',
+            size: 'sm'
+        });
+
+        modalInstance.result.then(function (selectedItem) {
+            $scope.selected = selectedItem;
+        }, function (error) {
+            openErrorModal(error);
+        });
+    };
+        
     function changeImage(){
         
-        $scope.image = $scope.objects[$scope.queueIndex][0];
+        var image = $scope.objects[$scope.queueIndex][0];
+        
+        image.saved = 
+                ($scope.image.saved === true ||$scope.image.saved == 1) 
+                ? true 
+                : false;
+        image.deleted = 
+                ($scope.image.deleted === true || $scope.image.deleted == 1)
+                ? true 
+                : false;
+        $scope.image = image;
         $scope.resolutions = $scope.objects[$scope.queueIndex];
         
         $scope.image.saved = 
@@ -165,8 +210,49 @@ app.controller('myCtrl', function($scope, $http) {
 
     //should probably be on window.ready
     $scope.getBackgrounds({sort: 'random'});
-  
-  
+});
+
+app.controller('ErrorModalCtrl', function ($scope, $modalInstance, error) {
+
+    $scope.error = error;
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+});
+
+app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, $http) {
+
+    $scope.user = {name: "", pass: "", verified_pass: ""};
+
+    $scope.register = function(){
+        
+        var oData = {user: user, method: 'register'};
+        $http.post('login.php', oData)
+            .then(function(response) {
+                console.log(response);
+                $modalInstance.close();
+            }, function(response) {
+                console.log(response);
+                return null;
+        });
+    };
+    $scope.submit = function () {
+        
+        var oData = {user: $scope.user, method: 'register'};
+        $http.post('login.php', oData)
+            .then(function(response) {
+                console.log(response);
+                $modalInstance.close();
+            }, function(response) {
+                console.log(response);
+                $modalInstance.dismiss(response);
+                return null;
+        });
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
 });
 
 app.directive('resize', function ($window) {

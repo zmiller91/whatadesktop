@@ -31,30 +31,31 @@ EOD;
         $strQuery = 
 <<<EOD
     SELECT * 
-    FROM user
-    WHERE user_name = $strUser;
+    FROM users
+    WHERE username = '$strUser';
 EOD;
-        $oUser = $this->execute($strQuery)[0];
-        return !empty($oUser) ? $oUser : false;
+        $oUser = $this->execute($strQuery);
+        return !empty($oUser) ? $oUser[0] : false;
     }
     
     public function createUser($strUser, $strPass){
         $strQuery = 
 <<<EOD
-    INSERT IGNORE INTO user 
+    INSERT IGNORE INTO users 
     (username, password, created_date)
-    VALUES ($strUser, $strPass, NOW());
+    VALUES ("$strUser", "$strPass", NOW());
 EOD;
         $this->execute($strQuery);
         return $this->selectLastInsertID();
     }
 
-    public function createUserSession($strUser, $strToken, $strExpiration){
+    public function createUserSession($strUser, $strToken, $strExpiration, $bPersist){
+        $bPersist = $bPersist ? '1' : '0';
         $strQuery = 
 <<<EOD
-    INSERT IGNORE INTO user 
-    (user, selector, created_date)
-    VALUES ($strUser, $strPass, NOW());
+    INSERT IGNORE INTO user_sessions
+    (user, token, expiration, persist, created_date, updated_date)
+    VALUES ("$strUser", "$strToken", "$strExpiration", $bPersist, NOW(), NOW());
 EOD;
         $this->execute($strQuery);
         return $this->selectLastInsertID();
@@ -67,7 +68,7 @@ EOD;
     SELECT * 
     FROM user_sessions
     WHERE id = $iSelector
-    AND user = $iUser;
+    AND user = "$iUser";
 EOD;
         $oUser = $this->execute($strQuery)[0];
         return !empty($oUser) ? $oUser : false;
@@ -77,8 +78,9 @@ EOD;
         $strQuery = 
 <<<EOD
     UPDATE user_sessions 
-    SET token = $strToken
-    expiration = $strExpiration
+    SET token = "$strToken",
+    expiration = "$strExpiration",
+    updated_date = NOW()
     WHERE id = $iSelector
     AND user = $iUser;
 EOD;

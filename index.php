@@ -12,18 +12,18 @@
     <title>Creative - Start Bootstrap Theme</title>
     
     <!-- angular/jquery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    
-    <!-- Bootstrap Core CSS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular-animate.js"></script>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.14.0.js"></script>
+    <script src="background.js"></script>
     <link rel="stylesheet" href="css/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="background.css" type="text/css">
 
     <!-- Custom Fonts -->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="background.css" type="text/css">
-    <script src="background.js"></script>
     
     <!-- Plugin CSS -->
     <link rel="stylesheet" href="css/animate.min.css" type="text/css">
@@ -41,6 +41,46 @@
 </head>
 
 <body id="page-top" ng-app="myApp" ng-controller="myCtrl" resize>
+    
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Register</h3>
+        </div>
+        <div class="modal-body">
+            <form name="register">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input name = "username" class="form-control" type="text" ng-model="user.name" required />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input class="form-control" type="Password" ng-model="user.pass" required />
+                </div>
+                <div class="form-group">
+                    <label>Verify Password</label>
+                    <input class="form-control" type="password" ng-model="user.verified_pass" required />
+                </div>
+            </form>
+            <div class="error-container">
+                <small class="error" ng-show="register.username.$dirty && register.username.$error.required">Please input a username</small>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Cancel</button>
+            <button type="button" class="btn btn-primary" ng-click="submit()">Submit</button>
+        </div>
+    </script>
+    
+    <script type="text/ng-template" id="ErrorModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Errors</h3>
+        </div>
+        <div class="modal-body" ng-bind-html-unsafe="error">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Cancel</button>
+        </div>
+    </script>
 
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
 
@@ -106,6 +146,7 @@
                       <ul class="dropdown-menu">
                         <li><a ng-click="savedView(); getBackgrounds({sort: 'saved'});">Saved</a></li>
                         <li><a ng-click="deletedView(); getBackgrounds({sort: 'deleted'});">Deleted</a></li>
+                        <li><a ng-click="open()">Register</a></li>
                       </ul>
                     </div>
                 </li>
@@ -116,9 +157,9 @@
     </nav>
 
     <header ng-show="queue" style="background-image: url({{image.path}}); background-size: {{width}}px {{height}}px; background-repeat: no-repeat; background-position: center;">
-        <div data-slide="next" href="" class="left-nav col-md-1" ng-click="previous()"></div>
+        <div href="" class="left-nav col-md-1" ng-click="previous()"></div>
         <div class="col-md-10"></div>
-        <div data-slide="next" href="" class="right-nav col-md-1" ng-click="next()"></div>
+        <div href="" class="right-nav col-md-1" ng-click="next()"></div>
     </header>
     
     <div class = "container tile-view" ng-show="!queue" style="width: {{ numTileCols * tileWidth }}px">
