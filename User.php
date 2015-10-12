@@ -145,6 +145,7 @@ class User {
                         $strNewToken, 
                         $strExpiration);
                 
+                Connection::commit($this->oConn);
                 $this->setCookie($strUser, $strSelector, $strNewToken);
                 $this->bLoggedIn = true;
                 return $this->bLoggedIn;
@@ -153,6 +154,7 @@ class User {
             //tampered with. delete everything.
             }else{
                 $this->oUserTable->deleteAllSessions($strUser);
+                Connection::commit($this->oConn);
                 unset($_COOKIE, $this->strCookieIdentifier);
                 $this->bLoggedIn = false;
                 return $this->bLoggedIn;
@@ -167,6 +169,7 @@ class User {
     private function createUser($strUser, $strPass){
         $strEncodedPass = $this->encode($strPass);
         $this->oUserTable->createUser($strUser, $strEncodedPass);
+                Connection::commit($this->oConn);
     }
     
     private function generateToken(){

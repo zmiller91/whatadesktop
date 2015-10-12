@@ -17,22 +17,18 @@ function requeueImg($oUser, $PostData, $oConn){
 
 function setStatus($oUser, $PostData, $oConn){
     
-    //string status to int status, assume 0
-    $strStatus = $PostData['status'];
-    $iStatus = 0;
-    if($strStatus === 'save'){
-        $iStatus = 1;
-    }elseif($strStatus === 'save'){
-        $iStatus = -1;
-    }
-
-    //store image for user
     $ImageTable = new ImageTable($oConn);
-    $ImageTable->setImageStatus(
+    $aImgIds = $ImageTable->getImgIds($PostData['root']);
+    $iStatus = $PostData['status'];
+    
+    //store image for user
+    foreach($aImgIds as $id){
+        $ImageTable->setImageStatus(
             $oUser->getId(), 
             $PostData['root'], 
+            $id['id'],
             $iStatus);
-
+    }
     return;
 }
 
@@ -85,7 +81,7 @@ if(!empty($_GET)
     echo json_encode($aOut);
 }
 
-//update, save or requeue
+//update, save or requeue, user must be logged in
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $_POSTDATA = json_decode(file_get_contents('php://input'),true);
     

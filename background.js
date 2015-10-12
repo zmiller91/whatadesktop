@@ -95,7 +95,9 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
         $scope.queueIndex = $scope.queueIndex >= $scope.objects.length ?
             0 :
             $scope.queueIndex;
-        changeImage();
+        if($scope.objects.length > 1){
+            changeImage();
+        }
     }
     
     //delete image
@@ -106,7 +108,8 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
             $scope.exitEnlarged();
         }
         removeFromQueue();
-        $http.get('delete.php?root=' + root).
+        var oData = {method: 'set_status', root: root, status: -1};
+        $http.post('api.php', oData).
             then(function(response) {}, 
             function(response) {
               console.log(response);
@@ -122,7 +125,8 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
             removeFromQueue();
         }
         
-        $http.get('save.php?root=' + root).
+        var oData = {method: 'set_status', root: root, status: 1};
+        $http.post('api.php', oData).
             then(function(response) {
                 $scope.image.saved = true;
                 $scope.image.deleted = false;
@@ -139,7 +143,8 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
         $scope.exitEnlarged();
         removeFromQueue();
         
-        $http.get('requeue.php?root=' + root).
+        var oData = {method: 'requeue', root: root};
+        $http.post('api.php', oData).
             then(function(response) {
             }, 
             function(response) {
@@ -165,10 +170,11 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
         $http.get('api.php', {params: params}).
                 
             then(function(response) {
-             $scope.objects = response['data'];
-              if($scope.objects.length > 0){
-                  changeImage();
-              }
+                $scope.queueIndex = 0;
+                $scope.objects = response['data'];
+                if($scope.objects.length > 0){
+                    changeImage();
+                } 
                 
             }, function(response) {
                 console.log(response);

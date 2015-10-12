@@ -65,11 +65,12 @@ EOD;
     private function getPopularSQL(){
         return
 <<<EOD
-        SELECT root FROM images
-        LEFT JOIN img_status 
-        ON images.id = img_status.img_id
+        SELECT root FROM img_status
+        LEFT JOIN images 
+        ON  img_status.img_id = images.id
         GROUP BY images.root
-        ORDER BY sum(images.status) DESC
+        HAVING sum(img_status.status) > 0
+        ORDER BY sum(img_status.status) DESC
         LIMIT 100;
 EOD;
     }
@@ -77,11 +78,12 @@ EOD;
     private function getUnPopularSQL(){
         return
 <<<EOD
-        SELECT root FROM images
-        LEFT JOIN img_status 
-        ON images.id = img_status.img_id
+        SELECT root FROM img_status
+        LEFT JOIN images 
+        ON  img_status.img_id = images.id
         GROUP BY images.root
-        ORDER BY sum(images.status) ASC
+        HAVING sum(img_status.status) < 0
+        ORDER BY sum(img_status.status) ASC
         LIMIT 100;
 EOD;
     }
@@ -93,7 +95,7 @@ EOD;
         LEFT JOIN img_status 
         ON images.id = img_status.img_id
         WHERE img_status.user = $iUser
-        AND im_status.status = 1;
+        AND img_status.status = 1;
 EOD;
     }
     
@@ -104,7 +106,7 @@ EOD;
         LEFT JOIN img_status 
         ON images.id = img_status.img_id
         WHERE img_status.user = $iUser
-        AND im_status.status = -1;
+        AND img_status.status = -1;
 EOD;
     }
     
@@ -152,14 +154,14 @@ EOD
 );
     }
     
-    public function setImageStatus($iUser, $strRoot, $iStatus){
+    public function setImageStatus($iUser, $strRoot, $iImgId, $iStatus){
         return $this->execute(
 <<<EOD
         INSERT INTO img_status
-        (user, img_root, status, updated_date)
-        ($iUser, '$strRoot', $iStatus, NOW())
+        (user, img_root, img_id, status, updated_date)
+        VALUES ($iUser, '$strRoot',$iImgId, $iStatus, NOW())
         ON DUPLICATE KEY UPDATE
-        SET status = $iStatus,
+        status = $iStatus,
         updated_date = NOW();
 EOD
         );
@@ -170,7 +172,16 @@ EOD
 <<<EOD
         DELETE FROM img_status
         WHERE user = $iUser
-        AND img_root = $strRoot;
+        AND img_root = "$strRoot";
+EOD
+        );
+    }
+    
+    public function getImgIds($root){
+        return $this->execute(
+<<<EOD
+        SELECT id from images
+        WHERE root = "$root";
 EOD
         );
     }

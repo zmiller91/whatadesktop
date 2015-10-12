@@ -34,4 +34,8 @@ class Connection {
     public static function closeConnection($conn){
         $conn->query("COMMIT");
     }
+    
+    public static function commit($conn){
+        $conn->query("COMMIT");
+    }
 }
