@@ -70,8 +70,8 @@ EOD;
     WHERE id = $iSelector
     AND user = "$iUser";
 EOD;
-        $oUser = $this->execute($strQuery)[0];
-        return !empty($oUser) ? $oUser : false;
+        $oUser = $this->execute($strQuery);
+        return !empty($oUser) ? $oUser[0] : false;
     }
     
     public function updateUserSession($iUser, $iSelector, $strToken, $strExpiration){

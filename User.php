@@ -32,6 +32,18 @@ class User {
         $this->oUserTable = new UserTable($this->oConn);
     }
     
+    public function getId(){
+        return $this->strUser;
+    }
+    
+    public function getErrors(){
+        return $this->getErrors();
+    }
+    
+    public function isLoggedIn(){
+        return $this->bLoggedIn;
+    }
+    
     public function register($strUser, $strPass){
         
         //create user and login

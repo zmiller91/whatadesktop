@@ -159,9 +159,10 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
     $scope.getBackgrounds = function(params){
         
         //should have a loading wheel here...
+        params.method = 'sort';
         $scope.objects = [];
         $scope.image = [];
-        $http.get('background.php', {params: params}).
+        $http.get('api.php', {params: params}).
                 
             then(function(response) {
              $scope.objects = response['data'];

@@ -42,34 +42,9 @@
 
 <body id="page-top" ng-app="myApp" ng-controller="myCtrl" resize>
     
-    <script type="text/ng-template" id="myModalContent.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Register</h3>
-        </div>
-        <div class="modal-body">
-            <form name="register">
-                <div class="form-group">
-                    <label>Username</label>
-                    <input name = "username" class="form-control" type="text" ng-model="user.name" required />
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input class="form-control" type="Password" ng-model="user.pass" required />
-                </div>
-                <div class="form-group">
-                    <label>Verify Password</label>
-                    <input class="form-control" type="password" ng-model="user.verified_pass" required />
-                </div>
-            </form>
-            <div class="error-container">
-                <small ng-cloak class="error" ng-show="register.username.$dirty && register.username.$error.required">Please input a username</small>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Cancel</button>
-            <button type="button" class="btn btn-primary" ng-click="submit()">Submit</button>
-        </div>
-    </script>
+    <?php
+        readfile("registration.html");
+    ?>
 
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
 
