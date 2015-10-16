@@ -44,6 +44,7 @@
     
     <?php
         readfile("registration.html");
+        readfile("login.html");
     ?>
 
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
@@ -63,20 +64,21 @@
 
             </div>
             <ul class="nav navbar-nav navbar-right">
-                <li>
+                <li ng-show="user.loggedIn">
                     <a class="page-scroll"  ng-click='requeue()' ng-show="enlarged">Requeue</a>
                 </li>
                 
-                <li>
+                <li ng-show="user.loggedIn">
                     <a ng-cloak class="page-scroll" ng-show="!image.saved && ((queue && !enlarged) || (deleted && enlarged))" ng-click="save()">Save</a>
                     <a ng-cloak class="page-scroll" ng-show="image.saved && ((queue && !enlarged) || (deleted && enlarged))">Saved</a>
                 </li>
                 
-                <li>
+                <li ng-show="user.loggedIn">
                     <a ng-cloak class="page-scroll" ng-show="!image.deleted && ((queue && !enlarged) || (saved && enlarged))" ng-click="delete()">Remove</a>
                     <a ng-cloak class="page-scroll" ng-show="image.deleted && ((queue && !enlarged) || (saved && enlarged))">Removed</a>
                 </li>
-                <li>
+                
+                <li ng-show="user.loggedIn">
                     <a ng-cloak class="page-scroll"  ng-click="exitEnlarged()" ng-show="enlarged">Exit</a>
                 </li>
                 
@@ -103,17 +105,21 @@
                     </div>
                 </li>
                 
-                <li>
+                <li ng-show="user.loggedIn">
                     <div class="dropdown">
-                      <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">User
-                      <span class="caret"></span></button>
+                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                            {{user.name}}
+                        <span class="caret"></span></button>
                       <ul class="dropdown-menu">
                         <li><a ng-click="savedView(); getBackgrounds({sort: 'saved'});">Saved</a></li>
                         <li><a ng-click="deletedView(); getBackgrounds({sort: 'deleted'});">Deleted</a></li>
-                        <li><a ng-click="open()">Register</a></li>
+                        <li><a ng-click="logout()">Log Out</a></li>
                       </ul>
                     </div>
                 </li>
+                
+                <li ng-show="!user.loggedIn"><a ng-click="register()">Register</a></li>
+                <li ng-show="!user.loggedIn"><a ng-click="login()">Login</a></li>
             </ul>
             <!-- /.navbar-collapse -->
         </div>
@@ -121,9 +127,9 @@
     </nav>
 
     <header ng-show="queue" style="background-image: url({{image.path}}); background-size: {{width}}px {{height}}px; background-repeat: no-repeat; background-position: center;">
-        <div href="" class="left-nav col-md-1" ng-click="previous()"></div>
+        <a href="" class="left-nav col-md-1" ng-click="previous()"></a>
         <div class="col-md-10"></div>
-        <div href="" class="right-nav col-md-1" ng-click="next()"></div>
+        <a href="" class="right-nav col-md-1" ng-click="next()"></a>
     </header>
     
     <div class = "container tile-view" ng-show="!queue" style="width: {{ numTileCols * tileWidth }}px">

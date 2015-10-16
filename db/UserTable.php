@@ -65,9 +65,16 @@ EOD;
     public function getUserSession($iUser, $iSelector){
         $strQuery = 
 <<<EOD
-    SELECT * 
+    SELECT 
+        users.username,
+        user_sessions.id,
+        user_sessions.user,
+        user_sessions.token,
+        user_sessions.expiration,
+        user_sessions.persist
     FROM user_sessions
-    WHERE id = $iSelector
+    LEFT JOIN users ON users.id = user_sessions.user
+    WHERE user_sessions.id = $iSelector
     AND user = "$iUser";
 EOD;
         $oUser = $this->execute($strQuery);

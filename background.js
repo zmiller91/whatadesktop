@@ -16,20 +16,46 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
     $scope.enlarged = false;
     $scope.saved = false;
     $scope.deleted = false;
+    $scope.user = {};
         
-    $scope.open = function () {
+    $scope.register = function () {
 
         var modalInstance = $uibModal.open({
-            templateUrl: 'myModalContent.html',
-            controller: 'ModalInstanceCtrl',
+            templateUrl: 'RegistrationModal',
+            controller: 'RegistrationCtrl',
             size: 'sm'
         });
 
-        modalInstance.result.then(function (selectedItem) {
-            $scope.selected = selectedItem;
-        }, function (error) {});
+        modalInstance.result.then(function (oUser) {
+            $scope.user = oUser;
+        }, function (error) {console.log(error)});
+    };    
+    
+    $scope.login = function () {
+
+        var modalInstance = $uibModal.open({
+            templateUrl: 'LoginModal',
+            controller: 'LoginCtrl',
+            size: 'sm'
+        });
+
+        modalInstance.result.then(function (oUser) {
+            $scope.user = oUser;
+        }, function (error) {console.log(error)});
     };
+    
+    $scope.logout = function(){
+        var oData = {user: $scope.user, method: 'logout'};
+        $http.post('login.php', oData)
+            .then(function(response) {
+                $scope.user = response['data']['user'];
+                $scope.getBackgrounds({sort: 'random'});
+                $scope.queueView();
+            }, function(error) {
+        });
+    }
         
+    //should probably put a watch on queueindex
     function changeImage(){
         $scope.image = $scope.objects[$scope.queueIndex][0];
         $scope.resolutions = $scope.objects[$scope.queueIndex];
@@ -43,6 +69,7 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
                 ? true 
                 : false;
     }
+    
     
     //activate queue view
     $scope.queueView = function(){
@@ -110,7 +137,9 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
         removeFromQueue();
         var oData = {method: 'set_status', root: root, status: -1};
         $http.post('api.php', oData).
-            then(function(response) {}, 
+            then(function(response) {
+                $scope.user = $scope.user = response['data']['user'];
+            }, 
             function(response) {
               console.log(response);
         });
@@ -128,6 +157,7 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
         var oData = {method: 'set_status', root: root, status: 1};
         $http.post('api.php', oData).
             then(function(response) {
+                $scope.user = $scope.user = response['data']['user'];
                 $scope.image.saved = true;
                 $scope.image.deleted = false;
                 $scope.objects[0]['saved'] = true;
@@ -146,6 +176,7 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
         var oData = {method: 'requeue', root: root};
         $http.post('api.php', oData).
             then(function(response) {
+                $scope.user = $scope.user = response['data']['user'];
             }, 
             function(response) {
               console.log(response);
@@ -171,7 +202,8 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
                 
             then(function(response) {
                 $scope.queueIndex = 0;
-                $scope.objects = response['data'];
+                $scope.objects = response['data']['images'];
+                $scope.user = $scope.user = response['data']['user'];
                 if($scope.objects.length > 0){
                     changeImage();
                 } 
@@ -186,31 +218,32 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
     $scope.getBackgrounds({sort: 'random'});
 });
 
-app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, $http) {
+app.controller('LoginCtrl', function ($scope, $modalInstance, $http) {
 
-    $scope.user = {name: "", pass: "", verified_pass: ""};
-
-    $scope.register = function(){
+    $scope.user = {name: "", pass: ""};
+    $scope.submit = function(){
         
-        var oData = {user: user, method: 'register'};
+        var oData = {user: $scope.user, method: 'login'};
         $http.post('login.php', oData)
             .then(function(response) {
-                console.log(response);
-                $modalInstance.close();
+                $modalInstance.close(response['data']);
             }, function(response) {
-                console.log(response);
+                $modalInstance.dismiss(response);
                 return null;
         });
     };
+});
+
+app.controller('RegistrationCtrl', function ($scope, $modalInstance, $http) {
+
+    $scope.user = {name: "", pass: "", verified_pass: ""};
     $scope.submit = function () {
         
         var oData = {user: $scope.user, method: 'register'};
         $http.post('login.php', oData)
             .then(function(response) {
-                console.log(response);
-                $modalInstance.close();
+                $modalInstance.close(response['data']);
             }, function(response) {
-                console.log(response);
                 $modalInstance.dismiss(response);
                 return null;
         });

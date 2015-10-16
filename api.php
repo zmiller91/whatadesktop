@@ -46,24 +46,24 @@ function getSortedImages($oUser, $strSort, $oConn){
     //images found, now format them into the correct structure
     $aImages = $ImageTable->getImages($aFileHashes);
     $aRootIndex = array();  
-    $aOut = array();
+    $oOut = array();
 
     foreach($aImages as $img){
         
         //if the root exists, then update it
         if(array_key_exists($img['root'], $aRootIndex)){
             $index = $aRootIndex[$img['root']];
-            $aOut[$index][] = $img;
+            $oOut[$index][] = $img;
             
         //otherwise insert it
         }else{
-            $aOut[] = array($img);
-            $aRootIndex[$img['root']] = sizeof($aOut) - 1;
+            $oOut[] = array($img);
+            $aRootIndex[$img['root']] = sizeof($oOut) - 1;
             
         }
     }
 
-    return $aOut;
+    return $oOut;
 }
         
 //create a connection and authenticate a user
@@ -77,7 +77,8 @@ if(!empty($_GET)
     && $_GET['method'] === 'sort' 
     &&!empty($_GET['sort']))){
     
-    $aOut = getSortedImages($oUser, $_GET['sort'], $oConn);
+    $aOut['images'] = getSortedImages($oUser, $_GET['sort'], $oConn);
+    $aOut['user'] = $oUser->getUser();
     echo json_encode($aOut);
 }
 
@@ -103,6 +104,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         
         requeueImg($oUser, $_POSTDATA, $oConn);
     }
+    
+    $oOut = [];
+    $oOut['user'] = $oUser->getUser();
+    echo json_encode($oOut);
 }
 
 Connection::closeConnection($oConn);

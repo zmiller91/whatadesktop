@@ -20,7 +20,8 @@ class User {
     private $oConn;
     private $bLoggedIn;
     private $strCookieIdentifier;
-    private $strUser;
+    private $iUserId;
+    private $strUserName;
     private $aErrors;
     private $oUserTable;
     
@@ -30,14 +31,29 @@ class User {
         $this->strCookieIdentifier = "mine";
         $this->aErrors = [];
         $this->oUserTable = new UserTable($this->oConn);
+        $this->strUserName = "";
+        
+    }
+    
+    public function getUser(){
+        $oUser = [];
+        $oUser['id'] = $this->getId();
+        $oUser['loggedIn'] = $this->bLoggedIn;
+        $oUser['errors'] = $this->getErrors();
+        $oUser['name'] = $this->getUsername();
+        return $oUser;
+    }
+    
+    public function getUsername(){
+        return $this->strUserName;
     }
     
     public function getId(){
-        return $this->strUser;
+        return $this->iUserId;
     }
     
     public function getErrors(){
-        return $this->getErrors();
+        return $this->aErrors;
     }
     
     public function isLoggedIn(){
@@ -56,6 +72,7 @@ class User {
         }else{
             $this->aErrors = self::ERR_USERNAME_EXISTS;
             $this->bLoggedIn = false;
+            $this->deleteCookie();
             return $this->bLoggedIn;
         }
     }
@@ -69,6 +86,7 @@ class User {
         if(!$oUserCreds){
             array_push($this->aErrors, self::ERR_INVALID_USERNAME);
             $this->bLoggedIn = false;
+            $this->deleteCookie();
             return $this->bLoggedIn;
         }
         
@@ -76,18 +94,19 @@ class User {
         if($bVerified){
             
             //create new session and set cookie 
-            $this->strUser = $oUserCreds['id'];
+            $this->iUserId = $oUserCreds['id'];
+            $this->strUserName = $oUserCreds['username'];
             $strToken = $this->generateToken();
             $strExpiration = $this->generateExiprationDate($bKeepLoggedIn);
             $strSelector = $this
                     ->oUserTable
                     ->createUserSession(
-                            $this->strUser, 
+                            $this->iUserId, 
                             $strToken, 
                             $strExpiration, 
                             $bKeepLoggedIn);
             
-            $this->setCookie($this->strUser, $strSelector, $strToken);
+            $this->setCookie($this->iUserId, $strSelector, $strToken);
             $this->bLoggedIn = true;
             return $this->bLoggedIn;
             
@@ -95,13 +114,14 @@ class User {
         }else{
             array_push($this->aErrors, self::ERR_INVALID_PASSWORD);
             $this->bLoggedIn = false;
+            $this->deleteCookie();
             return $this->bLoggedIn;
         }
     }
     
     public function logout() {
-        unset($_COOKIE[$this->strCookieIdentifier]);
         $this->bLoggedIn = false;
+        $this->deleteCookie();
         return $this->bLoggedIn;
     }
 
@@ -117,52 +137,56 @@ class User {
         }
 
         //all cookie fields must exist
-        list($strUser, $strSelector, $strToken) = explode(':', $strCookie, 3);
-        if(empty($strUser) || empty($strSelector) || empty($strToken)){
+        list($iUser, $strSelector, $strToken) = explode(':', $strCookie, 3);
+        if(empty($iUser) || empty($strSelector) || empty($strToken)){
             $this->bLoggedIn = false;
+            $this->deleteCookie();
             return $this->bLoggedIn;
         }
         
         //user session must exist
-        $oUserSession = $this->oUserTable->getUserSession($strUser, $strSelector);
+        $oUserSession = $this->oUserTable->getUserSession($iUser, $strSelector);
         if($oUserSession){
             
             //session expired
             if(date("Y-m-d H:i:s") > $oUserSession['expiration']){
                 $this->bLoggedIn = false;
+                $this->deleteCookie();
                 return $this->bLoggedIn;
             }
             
             //authenticated, generate new token and set new cookie
             if($oUserSession['token'] === $strToken){
                 
-                $this->strUser = $strUser;
+                $this->iUserId = $iUser;
+                $this->strUserName = $oUserSession['username'];
                 $strNewToken = $this->generateToken();
                 $strExpiration = $this->generateExiprationDate($oUserSession['persist'] == 1);
                 $this->oUserTable->updateUserSession(
-                        $strUser, 
+                        $iUser, 
                         $strSelector, 
                         $strNewToken, 
                         $strExpiration);
                 
                 Connection::commit($this->oConn);
-                $this->setCookie($strUser, $strSelector, $strNewToken);
+                $this->setCookie($iUser, $strSelector, $strNewToken);
                 $this->bLoggedIn = true;
                 return $this->bLoggedIn;
                 
             //security violation. user and selector exists but the token has been
             //tampered with. delete everything.
             }else{
-                $this->oUserTable->deleteAllSessions($strUser);
+                $this->oUserTable->deleteAllSessions($iUser);
                 Connection::commit($this->oConn);
-                unset($_COOKIE, $this->strCookieIdentifier);
                 $this->bLoggedIn = false;
+                $this->deleteCookie();
                 return $this->bLoggedIn;
             }
         }
         
         //no sessions found
         $this->bLoggedIn = false;
+        $this->deleteCookie();
         return $this->bLoggedIn;
     }
     
@@ -179,6 +203,10 @@ class User {
     private function setCookie($strUser, $strSelector, $strToken){
         $strCookie = "$strUser:$strSelector:$strToken";
         setcookie($this->strCookieIdentifier, $strCookie);
+    }
+    
+    private function deleteCookie(){
+        setcookie($this->strCookieIdentifier, '', time() - 3600);
     }
     
     //return an token expiration date in MYSQL DATETIME format
