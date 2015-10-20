@@ -157,7 +157,7 @@ EOD;
 
             $strStatusSQL = 
 <<<EOD
-        ifnull(status, 0) as status                 
+        IFNULL(status, 0) AS status                 
 EOD;
         }
         

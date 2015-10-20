@@ -171,10 +171,8 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
         $http.post('api.php', oData).
             then(function(response) {
                 $scope.user = $scope.user = response['data']['user'];
-                $scope.image.saved = true;
-                $scope.image.deleted = false;
-                $scope.objects[0]['saved'] = true;
-                $scope.objects[0]['deleted'] = false;
+                $scope.image.status = 1;
+                $scope.objects[0]['status'] = 1;
             }, 
             function(response) {
               console.log(response);
