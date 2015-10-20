@@ -13,10 +13,9 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
     
     $scope.queue = true;
     $scope.queueIndex = 0;
-    $scope.enlarged = false;
-    $scope.saved = false;
-    $scope.deleted = false;
+    $scope.enlarged = true;
     $scope.user = {};
+    $scope.view = 'queue';
         
     $scope.register = function () {
 
@@ -72,46 +71,16 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
                 $scope.image.status = -1;
                 break;
         }
-        
-        $scope.image.saved = 
-                ($scope.image.saved === true ||$scope.image.saved == 1) 
-                ? true 
-                : false;
-        $scope.image.deleted = 
-                ($scope.image.deleted === true || $scope.image.deleted == 1)
-                ? true 
-                : false;
     }
     
-    
-    //activate queue view
-    $scope.queueView = function(){
-        $scope.queue = true;
-        $scope.deleted = false;
-        $scope.saved = false;
-        $scope.enlarged = false;
-    };
-    
-    //activate saved view
-    $scope.savedView = function(){
-        $scope.saved = true;
-        $scope.deleted = false;
-        $scope.queue = false;
-        $scope.enlarged = false;
-    };
-    
-    //activate deleted view
-    $scope.deletedView = function(){
-        $scope.deleted = true;
-        $scope.saved = false;
-        $scope.queue = false;
-        $scope.enlarged = false;
+    $scope.changeView = function(strPageView, bEnlarged){
+        $scope.view = strPageView;
+        $scope.enlarged = bEnlarged;
     };
     
     //exit enlarged view
     $scope.exitEnlarged = function(){
-        $scope.enlarged = false; 
-        $scope.queue = false;
+        $scope.enlarged = false;
     };
     
     //go to next image
@@ -144,7 +113,7 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
     $scope.delete = function(){
         
         var root = $scope.image.root;
-        if($scope.enlarged){
+        if($scope.enlarged && $scope.view === 'user_imgs'){
             $scope.exitEnlarged();
         }
         removeFromQueue();
@@ -162,7 +131,7 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
     $scope.save = function(){
         
         var root = $scope.image['root'];
-        if($scope.enlarged){
+        if($scope.enlarged && $scope.view === 'user_imgs'){
             $scope.exitEnlarged();
             removeFromQueue();
         }
@@ -198,7 +167,6 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
     $scope.enlarge = function(id){
         $scope.queueIndex = id;
         changeImage();
-        $scope.queue = true;
         $scope.enlarged = true;
     };
     

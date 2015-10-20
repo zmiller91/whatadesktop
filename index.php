@@ -64,25 +64,26 @@
 
             </div>
             <ul class="nav navbar-nav navbar-right">
-                <li ng-show="user.loggedIn">
+                
+                <li ng-show="user.loggedIn && view == 'user_imgs' && enlarged">
+                    <a ng-cloak class="page-scroll"  ng-click="exitEnlarged()" ng-show="enlarged">Exit</a>
+                </li>
+                
+                <li ng-show="user.loggedIn && view === 'user_imgs' && enlarged">
                     <a class="page-scroll"  ng-click='requeue()' ng-show="enlarged">Requeue</a>
                 </li>
                 
-                <li ng-show="user.loggedIn">
+                <li ng-show="user.loggedIn && (view !== 'user_imgs' || enlarged)">
                     <a ng-cloak ng-show="image.status <= 0" class="page-scroll" ng-click="save()">Save</a>
                     <a ng-cloak ng-show="image.status > 0" class="page-scroll">Saved</a>
                 
-                <li ng-show="user.loggedIn">
+                <li ng-show="user.loggedIn && (view !== 'user_imgs' || enlarged)">
                     <a ng-cloak  ng-show="image.status >= 0" class="page-scroll" ng-click="delete()">Remove</a>
                     <a ng-cloak ng-show="image.status < 0" class="page-scroll">Removed</a>
                 </li>
                 
-                <li ng-show="user.loggedIn">
-                    <a ng-cloak class="page-scroll"  ng-click="exitEnlarged()" ng-show="enlarged">Exit</a>
-                </li>
-                
                 <li>
-                    <div ng-cloak ng-show="queue || enlarged" class="dropdown">
+                    <div ng-show="enlarged" class="dropdown">
                       <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Download
                       <span class="caret"></span></button>
                       <ul class="dropdown-menu">
@@ -96,10 +97,10 @@
                       <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Queues
                       <span class="caret"></span></button>
                       <ul class="dropdown-menu">
-                        <li><a ng-click="queueView(); getBackgrounds({sort: 'random'});">Random</a></li>
-                        <li><a ng-click="queueView(); getBackgrounds({sort: 'new'});">New</a></li>
-                        <li><a ng-click="queueView(); getBackgrounds({sort: 'popular'});">Popular</a></li>
-                        <li><a ng-click="queueView(); getBackgrounds({sort: 'unpopular'});">Unpopular</a></li>
+                        <li><a ng-click="changeView('queue', true); getBackgrounds({sort: 'random'});">Random</a></li>
+                        <li><a ng-click="changeView('queue', true); getBackgrounds({sort: 'new'});">New</a></li>
+                        <li><a ng-click="changeView('queue', true); getBackgrounds({sort: 'popular'});">Popular</a></li>
+                        <li><a ng-click="changeView('queue', true); getBackgrounds({sort: 'unpopular'});">Unpopular</a></li>
                       </ul>
                     </div>
                 </li>
@@ -110,8 +111,8 @@
                             {{user.name}}
                         <span class="caret"></span></button>
                       <ul class="dropdown-menu">
-                        <li><a ng-click="savedView(); getBackgrounds({sort: 'saved'});">Saved</a></li>
-                        <li><a ng-click="deletedView(); getBackgrounds({sort: 'deleted'});">Deleted</a></li>
+                        <li><a ng-click="changeView('user_imgs'); getBackgrounds({sort: 'saved'});">Saved</a></li>
+                        <li><a ng-click="changeView('user_imgs'); getBackgrounds({sort: 'deleted'});">Deleted</a></li>
                         <li><a ng-click="logout()">Log Out</a></li>
                       </ul>
                     </div>
@@ -125,13 +126,13 @@
         <!-- /.container-fluid -->
     </nav>
 
-    <header ng-show="queue" style="background-image: url({{image.path}}); background-size: {{width}}px {{height}}px; background-repeat: no-repeat; background-position: center;">
+    <header ng-show="view === 'queue' || enlarged" style="background-image: url({{image.path}}); background-size: {{width}}px {{height}}px; background-repeat: no-repeat; background-position: center;">
         <a href="" class="left-nav col-md-1" ng-click="previous()"></a>
         <div class="col-md-10"></div>
         <a href="" class="right-nav col-md-1" ng-click="next()"></a>
     </header>
     
-    <div class = "container tile-view" ng-show="!queue" style="width: {{ numTileCols * tileWidth }}px">
+    <div class = "container tile-view" ng-show="view === 'user_imgs' && !enlarged" style="width: {{ numTileCols * tileWidth }}px">
         <div class="row" ng-repeat="row in rows">
             <div class="col-md-{{colsize}}" ng-repeat="img in row" >
                 <img class="tile" src="{{img.path}}" 
