@@ -69,13 +69,12 @@
                 </li>
                 
                 <li ng-show="user.loggedIn">
-                    <a ng-cloak class="page-scroll" ng-show="!image.saved && ((queue && !enlarged) || (deleted && enlarged))" ng-click="save()">Save</a>
-                    <a ng-cloak class="page-scroll" ng-show="image.saved && ((queue && !enlarged) || (deleted && enlarged))">Saved</a>
-                </li>
+                    <a ng-cloak ng-show="image.status <= 0" class="page-scroll" ng-click="save()">Save</a>
+                    <a ng-cloak ng-show="image.status > 0" class="page-scroll">Saved</a>
                 
                 <li ng-show="user.loggedIn">
-                    <a ng-cloak class="page-scroll" ng-show="!image.deleted && ((queue && !enlarged) || (saved && enlarged))" ng-click="delete()">Remove</a>
-                    <a ng-cloak class="page-scroll" ng-show="image.deleted && ((queue && !enlarged) || (saved && enlarged))">Removed</a>
+                    <a ng-cloak  ng-show="image.status >= 0" class="page-scroll" ng-click="delete()">Remove</a>
+                    <a ng-cloak ng-show="image.status < 0" class="page-scroll">Removed</a>
                 </li>
                 
                 <li ng-show="user.loggedIn">

@@ -32,7 +32,7 @@ function setStatus($oUser, $PostData, $oConn){
     return;
 }
 
-function getSortedImages($oUser, $strSort, $oConn){
+function getSortedImages($oUser, $strSort, $oConn, $iStatus = null){
     
     $mUserId = $oUser->isLoggedIn() ? $oUser->getId() : null;
     
@@ -44,11 +44,16 @@ function getSortedImages($oUser, $strSort, $oConn){
     }
     
     //images found, now format them into the correct structure
-    $aImages = $ImageTable->getImages($aFileHashes);
+    $aImages = $ImageTable->getImages($aFileHashes, $mUserId);
     $aRootIndex = array();  
     $oOut = array();
 
     foreach($aImages as $img){
+        
+        //set default status if provided
+        if($iStatus){
+            $img['status'] = $iStatus;
+        }
         
         //if the root exists, then update it
         if(array_key_exists($img['root'], $aRootIndex)){

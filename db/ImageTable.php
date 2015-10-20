@@ -142,16 +142,36 @@ EOD;
         return $this->execute($sql);
     }
     
-    public function getImages($aFileHashes){
-        $sqlIn = $this->generateIn('root', $aFileHashes);
-        return $this->execute(
+    public function getImages($aFileHashes, $iUser = null){
+        
+        // set defaults...dont really like $strStatusSQL...
+        $strJoinSQL = '';
+        $strStatusSQL = '0 AS status';
+        if(isset($iUser)){
+            $strJoinSQL = 
 <<<EOD
-        SELECT id, path, width, height, root, saved, deleted FROM IMAGES
+        LEFT JOIN img_status
+        ON images.id = img_status.img_id
+        AND img_status.user = $iUser                  
+EOD;
+
+            $strStatusSQL = 
+<<<EOD
+        ifnull(status, 0) as status                 
+EOD;
+        }
+        
+        $sqlIn = $this->generateIn('root', $aFileHashes);
+        $sql =
+<<<EOD
+        SELECT id, path, width, height, root, $strStatusSQL
+        FROM images
+        $strJoinSQL
         WHERE root in
         {$sqlIn}
         ORDER BY root, width DESC, height DESC;
-EOD
-);
+EOD;
+        return $this->execute($sql);
     }
     
     public function setImageStatus($iUser, $strRoot, $iImgId, $iStatus){

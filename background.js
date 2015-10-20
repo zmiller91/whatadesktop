@@ -60,6 +60,19 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
         $scope.image = $scope.objects[$scope.queueIndex][0];
         $scope.resolutions = $scope.objects[$scope.queueIndex];
         
+        switch($scope.image.status){
+            
+            case '1':
+                $scope.image.status = 1;
+                break;
+            case '0':
+                $scope.image.status = 0;
+                break;
+            case '-1':
+                $scope.image.status = -1;
+                break;
+        }
+        
         $scope.image.saved = 
                 ($scope.image.saved === true ||$scope.image.saved == 1) 
                 ? true 
