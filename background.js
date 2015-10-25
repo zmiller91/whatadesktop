@@ -16,6 +16,7 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
     $scope.enlarged = true;
     $scope.user = {};
     $scope.view = 'queue';
+    $scope.loaded = false;
         
     $scope.register = function () {
 
@@ -180,6 +181,7 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
         $http.get('api.php', {params: params}).
                 
             then(function(response) {
+                $scope.loaded = true;
                 $scope.queueIndex = 0;
                 $scope.objects = response['data']['images'];
                 $scope.user = $scope.user = response['data']['user'];
@@ -188,6 +190,7 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
                 } 
                 
             }, function(response) {
+                $scope.loaded = true;
                 console.log(response);
                 return null;
             });
@@ -233,8 +236,16 @@ app.controller('RegistrationCtrl', function ($scope, $modalInstance, $http) {
     };
 });
 
+app.directive('appendHtml', function(){
+
+  return {
+    templateUrl: 'background.php'
+  };
+})
+
 app.directive('resize', function ($window) {
     return function (scope, element) {
+        
         scope.colsize = 1;
         scope.rows = [];
         scope.tileInfo = {};
