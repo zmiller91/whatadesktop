@@ -1,8 +1,8 @@
 
 <!--Registration and login modals-->
 <?php
-    readfile("registration.html");
-    readfile("login.html");
+    readfile("user/registration.html");
+    readfile("user/login.html");
 ?>
 
 <!--Navigation-->

@@ -1,6 +1,6 @@
 <?php
 
-require_once 'ApplicationAutoloader.php';
+require_once '../app/ApplicationAutoloader.php';
 
 function requeueImg($oUser, $PostData, $oConn){
     

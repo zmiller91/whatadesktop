@@ -3,7 +3,7 @@ app.controller('myCtrl', function($scope, $http, $uibModal) {
     
     $scope.objects = [];
     $scope.image = {
-        path: "img/header.jpg",
+        path: "../lib/img/header.jpg",
         width: window.innerWidth,
         height: window.innerHeight
     };
@@ -206,7 +206,7 @@ app.controller('LoginCtrl', function ($scope, $modalInstance, $http) {
     $scope.submit = function(){
         
         var oData = {user: $scope.user, method: 'login'};
-        $http.post('login.php', oData)
+        $http.post('php/user/login.php', oData)
             .then(function(response) {
                 $modalInstance.close(response['data']);
             }, function(response) {
