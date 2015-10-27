@@ -1,0 +1,194 @@
+/* CSS */
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+.gridWrapper {
+      overflow: hidden;
+      margin: 5px;
+}
+
+/* centered columns styles */
+.row-centered {
+    text-align:center;
+}
+.col-centered {
+    display:inline-block;
+    float:none;/* reset the text-align */
+    text-align:left;/* inline-block space fix */
+    margin-right: 5px;
+}
+
+.tile-view{
+    margin-top: 55px;
+}
+
+.tile {
+/* float: left; */
+      /* position: relative; */
+      /* width: 320px; */
+      height:  180px;/* padding-bottom: 15%; */
+    /* margin-left: 15px; */padding: 5px;}
+.tileInner {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      top: 10px;
+      bottom: 10px;
+      overflow: hidden;
+    }
+.tileInner img {
+      width: 100%;
+    }
+/*Media Query to Adapt Screen to iPhone*/
+@media only screen and (max-width : 320px) {
+    .tile {
+        width: 100%;
+        padding-bottom: 100%;
+      }
+}
+/*Media Query to Adapt Screen to iPhone Retina*/
+@media only screen and (max-width : 640px) {
+    .box {
+        width: 50%;
+        padding-bottom: 50%;
+      }
+}
+
+
+/* carousel */
+
+body {
+    background: #202020;
+}
+
+.dropdown-menu{
+    
+}
+
+#mainNav
+{
+    background: rgb(32,32,32);/*fallback for browsers that dont support rgba*/
+    background: rgba(32,32,32, .25);
+}
+
+#mainNav:hover
+{
+    background: rgb(32,32,32); /*fallback for browsers that dont support rgba*/
+    background: rgba(32,32,32, 1);
+  
+
+    
+transition: opacity 2s ease-in; /* vendorless fallback */
+-o-transition: opacity 2s ease-in; /* opera */
+-ms-transition: opacity 2s ease-in; /* IE 10 */
+-moz-transition: opacity  2s ease-in; /* Firefox */
+-webkit-transition: opacity 2s ease-in; /*safari and chrome */
+}
+
+.navbar-default .nav > li>div>button {
+    background: transparent;
+    color: rgba(255,255,255,.7);
+    position: relative;
+    display: block;
+    padding: 16px 15px;
+}
+
+.ctrl-menu{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.media-carousel 
+{
+  margin-bottom: 0;
+  padding: 0 40px 30px 40px;
+  margin-top: 30px;
+}
+/* Previous button  */
+.left-nav:hover 
+{
+  float: left;
+  padding:0;
+  margin:0;
+  height:100%;
+  opacity: 0.55;
+  font-size: 250%;
+  color: #66FF33;
+  cursor: pointer;
+  content: linear-gradient(90deg, #000000, #202020);
+  
+
+    
+transition: opacity 0.2s ease-in; /* vendorless fallback */
+-o-transition: opacity 0.2s ease-in; /* opera */
+-ms-transition: opacity 0.2s ease-in; /* IE 10 */
+-moz-transition: opacity  0.2s ease-in; /* Firefox */
+-webkit-transition: opacity 0.2s ease-in; /*safari and chrome */
+
+}
+
+.left-nav
+{
+  float: left;
+  padding:0;
+  margin:0;
+  opacity: 0;
+  font-size: 250%;
+  color: #66FF33;
+  
+  content: linear-gradient(90deg, #000000, #202020);
+
+}
+
+.right-nav:hover 
+{
+  padding:0; 
+  margin:0;
+  opacity: 0.5;
+  font-size: 250%;
+  cursor: pointer;
+  content: linear-gradient(90deg, #202020, #000000);
+  
+    transition: opacity 0.2s ease-in; /* vendorless fallback */
+    -o-transition: opacity 0.2s ease-in; /* opera */
+    -ms-transition: opacity 0.2s ease-in; /* IE 10 */
+    -moz-transition: opacity  0.2s ease-in; /* Firefox */
+    -webkit-transition: opacity 0.2s ease-in; /*safari and chrome */
+
+}
+
+/* Next button  */
+.right-nav 
+{
+  padding:0; 
+  margin:0;
+  float: right;
+  opacity: 0;
+  font-size: 250%;
+  content: linear-gradient(90deg, #202020, #000000);
+}
+/* Changes the position of the indicators */
+.media-carousel .carousel-indicators 
+{
+  right: 50%;
+  top: auto;
+  bottom: 0px;
+  margin-right: -19px;
+}
+/* Changes the colour of the indicators */
+.media-carousel .carousel-indicators li 
+{
+  background: #c0c0c0;
+}
+.media-carousel .carousel-indicators .active 
+{
+  background: #333333;
+}
+.media-carousel img
+{
+  width: 250px;
+  height: 100px
+}
+/* End carousel */
