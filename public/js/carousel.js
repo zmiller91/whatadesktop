@@ -4,45 +4,64 @@ define([
     return {
         init: function(app) {
             
-            app.controller("CarouselCtrl", function ($scope) {
-
-                var carousel = new Carousel();
-                carousel.add("1", "1");
-                carousel.add("2", "2");
-                carousel.add("3", "3");
-                carousel.add("4", "4");
+            app.controller("CarouselCtrl", function (CarouselData, $scope, $routeParams, $location) {
                 
+                $scope.id = $routeParams.id;
                 
-                $scope.current = carousel.current();
+                if($scope.id != null)
+                {
+                    CarouselData.carousel.add($scope.id, $scope.id)
+                }
+                else
+                {
+                    CarouselData.carousel.add("1", "1");
+                    CarouselData.carousel.add("2", "2");
+                    CarouselData.carousel.add("3", "3");
+                    CarouselData.carousel.add("4", "4");
+                }
+                
+                $scope.current = CarouselData.carousel.current();
+                $scope.id = CarouselData.carousel.currentKey();
+                $location.path('/Image(' + $scope.id + ")");
                 $scope.key = "key";
                 $scope.value = "value";
                 
                 $scope.next = function()
                 {
-                    $scope.current = carousel.next();
+                    $scope.current = CarouselData.carousel.next();
+                    $scope.id = CarouselData.carousel.currentKey();
+                    $location.path('/Image(' + $scope.id + ")");
                 }
                 
                 $scope.previous = function()
                 {
-                    $scope.current = carousel.previous();
+                    $scope.current = CarouselData.carousel.previous();
+                    $scope.id = CarouselData.carousel.currentKey();
+                    $location.path('/Image(' + $scope.id + ")");
                 }
                 
                 $scope.deleteCurrent = function()
                 {
-                    carousel.delete();
-                    $scope.current = carousel.current();
+                    CarouselData.carousel.delete();
+                    $scope.current = CarouselData.carousel.current();
+                    $scope.id = CarouselData.carousel.currentKey();
+                    $location.path($scope.id != null ? "/Image(" + $scope.id + ")" : "/");
                 }
                 
                 $scope.delete = function()
                 {
-                    carousel.deleteKey(this.key);
-                    $scope.current = carousel.current();
+                    CarouselData.carousel.deleteKey(this.key);
+                    $scope.current = CarouselData.carousel.current();
+                    $scope.id = CarouselData.carousel.currentKey();
+                    $location.path($scope.id != null ? "/Image(" + $scope.id + ")" : "/");
                 }
                 
                 $scope.add = function()
                 {
-                    carousel.add(this.key, this.value);
-                    $scope.current = carousel.current();
+                    CarouselData.carousel.add(this.key, this.value);
+                    $scope.current = CarouselData.carousel.current();
+                    $scope.id = CarouselData.carousel.currentKey();
+                    $location.path('/Image(' + $scope.id + ")");
                 }
                 
             })
@@ -51,7 +70,11 @@ define([
               return {
                 templateUrl: 'html/carousel.html'
               };
-            });
+            })
+
+            .service('CarouselData', ['$rootScope', '$http', function($rootScope, $http) {
+                this.carousel = new Carousel();
+            }]);
         }
     };
 });
