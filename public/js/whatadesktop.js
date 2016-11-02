@@ -5,11 +5,26 @@ define([
   function(carousel){
       
     // Create the base module for the page
-    var wad = angular.module('whatadesktop', []);
+    var wad = angular.module('whatadesktop', ['ngRoute']);
     
     // Init the controllers, directives, and services for all the components
     // on the page
     carousel.init(wad);
+
+
+    wad.config(function($routeProvider, $locationProvider) {
+        $routeProvider
+            .when('/home', {
+                    templateUrl: 'html/whatadesktop.html',
+                    controller: 'CarouselCtrl'
+            })
+
+            .otherwise({
+                    redirectTo: '/home'
+            });
+
+        $locationProvider.html5Mode(true);
+    });
     
     // Bootstrap the page
     angular.bootstrap(document, ['whatadesktop']);
