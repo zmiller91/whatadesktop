@@ -10,7 +10,14 @@ define([
                 
                 if($scope.id != null)
                 {
-                    CarouselData.carousel.add($scope.id, $scope.id)
+                    if(CarouselData.carousel.contains($scope.id))
+                    {
+                        CarouselData.carousel.seekTo($scope.id);
+                    }
+                    else
+                    {
+                        CarouselData.carousel.add($scope.id, $scope.id)
+                    }
                 }
                 else
                 {
@@ -42,7 +49,7 @@ define([
                 
                 $scope.deleteCurrent = function()
                 {
-                    CarouselData.carousel.delete();
+                    CarouselData.carousel.deleteCurrent();
                     $scope.current = CarouselData.carousel.current();
                     $scope.id = CarouselData.carousel.currentKey();
                     $location.path($scope.id != null ? "/Image(" + $scope.id + ")" : "/");
