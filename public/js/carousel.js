@@ -25,6 +25,11 @@ define([
                     CarouselData.carousel.add("2", "2");
                     CarouselData.carousel.add("3", "3");
                     CarouselData.carousel.add("4", "4");
+                    
+                    CarouselData.get(function(data){
+                        console.log(data);
+                    }, function(){});
+                    
                 }
                 
                 $scope.current = CarouselData.carousel.current();
@@ -81,6 +86,20 @@ define([
 
             .service('CarouselData', ['$rootScope', '$http', function($rootScope, $http) {
                 this.carousel = new Carousel();
+                this.response = {};
+                this.data = {};
+                
+                this.get =  function(success,error) {
+                    $http.get('/api/image', {params:{method: "notifications"}})
+                        .then(function(response) {
+                            this.response = response;
+                            this.data = response.data;
+                            success(this.data);
+                        }, function(response) {
+                            error(response);
+                        }
+                    );
+                };
             }]);
         }
     };

@@ -5,8 +5,13 @@ Two Submodules:
 Additions to `httpd.conf`
 
 ```
-    DocumentRoot "/whatadesktop/public"
-    <Directory "/whatadesktop/public">
+    DEFINE RootDir C:/xampp/htdocs/
+    DEFINE PublicDir whatadesktop/public
+    SetEnv ROOT_DIR ${RootDir}
+    SetEnv PUBLIC_DIR ${PublicDir}
+
+    DocumentRoot ${RootDir}${PublicDir}
+    <Directory ${RootDir}${PublicDir}>
         RewriteEngine on
 
         # Don't rewrite files or directories
