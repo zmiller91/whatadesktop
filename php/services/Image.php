@@ -22,7 +22,7 @@ class Image extends Service{
     }
 
     protected function execute() {
-        
+        $this->m_mData = "Hello World!";
     }
 
 //put your code here
