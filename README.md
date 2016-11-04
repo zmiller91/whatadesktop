@@ -1,6 +1,9 @@
-Two Submodules:
-    - https://github.com/zmiller91/js-common
-    - https://github.com/requirejs/requirejs
+Submodules:
+
+    * https://github.com/zmiller91/php-common
+    * https://github.com/zmiller91/js-common
+    * https://github.com/requirejs/requirejs
+
 
 Additions to `httpd.conf`
 
