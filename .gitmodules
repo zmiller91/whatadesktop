@@ -1,9 +1,6 @@
 [submodule "public/lib/requirejs"]
 	path = public/lib/requirejs
 	url = https://github.com/requirejs/requirejs.git
-[submodule "public/lib/js-common"]
-	path = public/lib/js-common
-	url = https://github.com/zmiller91/js-common.git
 [submodule "php/common"]
 	path = php/common
 	url = https://github.com/zmiller91/php-common

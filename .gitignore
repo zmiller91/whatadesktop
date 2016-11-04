@@ -1,3 +1,4 @@
-nbproject/*
-cache/*
-public/lib/js-common/*
+nbproject/
+cache/
+public/lib/js-common/
+php/common

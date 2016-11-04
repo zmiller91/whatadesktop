@@ -1,13 +1,22 @@
 <?php
+require_once 'Server.php';
 
-define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT']. '/Background/');
-$GLOBALS['AUTOLOAD_CACHE_PATH']  = ROOT_PATH . "cache/classpaths.cache";
-$GLOBALS['AUTOLOAD_CACHE'] = unserialize(file_get_contents($AUTOLOAD_CACHE_PATH));
+if(!is_dir(CACHE_DIR))
+{
+    mkdir(CACHE_DIR, 0777, true);
+}
+
+if(!file_exists(AUTOLOAD_CACHE_PATH))
+{
+    touch(AUTOLOAD_CACHE_PATH);
+}
+
+$cache = unserialize(file_get_contents(AUTOLOAD_CACHE_PATH));
+$GLOBALS['AUTOLOAD_CACHE'] = $cache ? $cache : array();
 
 function application_autoloader($class) {
     $class = strtolower($class);
     $class_filename = strtolower($class).'.php';
-    $temp = $GLOBALS['AUTOLOAD_CACHE_PATH'];
     if (array_key_exists($class, $GLOBALS['AUTOLOAD_CACHE'])) {
         /* Load class using path from cache file (if the file still exists) */
         if (file_exists($GLOBALS['AUTOLOAD_CACHE'][$class])) { 
@@ -21,7 +30,7 @@ function application_autoloader($class) {
             if (strtolower($file->getFilename()) == $class_filename) {
                 $full_path = $file->getRealPath();
                 $GLOBALS['AUTOLOAD_CACHE'][$class] = $full_path;
-                file_put_contents($GLOBALS['AUTOLOAD_CACHE_PATH'], serialize($GLOBALS['AUTOLOAD_CACHE']));
+                file_put_contents(AUTOLOAD_CACHE_PATH, serialize($GLOBALS['AUTOLOAD_CACHE']));
                 require_once $full_path;
                 break;
             }
