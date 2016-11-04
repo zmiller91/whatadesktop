@@ -8,9 +8,9 @@
     $requestURI = ltrim(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH), "/"); 
     $uri = preg_replace("/^" . preg_quote($publicDirectory, "/") . "/", "", $requestURI);
     $uri =  trim($uri, "/");
-    $apiRegex = "/^" . preg_quote("api/", "/") . "/";
     
     // If this isn't an api call, then return main.html
+    $apiRegex = "/^" . preg_quote("api/", "/") . "/";
     if(preg_match($apiRegex, $uri) === 0)
     {
         readfile('html/main.html');

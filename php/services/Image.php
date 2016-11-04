@@ -11,7 +11,12 @@
  *
  * @author zmiller
  */
-class Image extends Service{
+class Image extends Service
+{
+
+    protected function allowableMethods() {
+        return array(self::GET);
+    }
     
     protected function validate() {
         return true;
@@ -21,8 +26,9 @@ class Image extends Service{
         return true;
     }
 
-    protected function execute() {
-        $this->m_mData = "Hello World!";
+    protected function get() 
+    {
+        return true;
     }
 
 //put your code here
