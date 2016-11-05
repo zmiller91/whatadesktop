@@ -2,24 +2,27 @@ define([
     "../lib/js-common/Carousel",
     "js/utilities.js"
 ], function(){return{init: function(app) {
-
+    
+    // Controller for the image/:id route
     app.controller("ImageCtrl", function(CarouselData, $routeParams)
     {
-        // Get the image from the server   
         CarouselData.getImage($routeParams.id, function(){}, function(){}); 
     });
 
+    // Controller for the queue/:sort route
     app.controller("QueueCtrl", function(CarouselData, $routeParams)
     {
-        // Get the queue from the server   
         CarouselData.getQueue($routeParams.sort, function(){}, function(){});        
     });
 
+    // Main carousel controller
     app.controller("CarouselCtrl", function (CarouselData, $scope) 
     {
         $scope.carousel = CarouselData.carousel;
         $scope.current = null;
         
+        // Convenience method for updating the carousel, this includes: image,
+        // image dimensions, and window dimensions
         $scope.update = function()
         {
             if($scope.carousel.currentKey())
@@ -36,19 +39,19 @@ define([
             }
         }
 
+        // Watch for changes in the carousel, if the current image changes then
+        // update the carousel view
         $scope.$watch(
-
-            // Variable to watch
             function($scope)
             {
                 return $scope.carousel.currentKey();
             },
-
-            // Update on change
             $scope.update
         );
     });
 
+    // Main service for the carousel. This service holds the Carousel data
+    // object and is responsible for retrieving carousel data from the server
     app.service('CarouselData', ['$http', function($http) 
     {
         var $this = this;
@@ -56,45 +59,41 @@ define([
         this.response = {};
         this.data = {};
         
-        parseResponse = function(response)
+        // Generic GET request. Should only be used for carousel data.
+        this.get = function(url, params, success, error)
         {
-            this.response = response;
-            this.data = response.data;
-            for(var k in this.data)
+            $http.get(url, {params:params})
+            .then(function(response) 
             {
-                $this.carousel.add(k, this.data[k]);
-            }
-        };
+                this.response = response;
+                this.data = response.data;
+                for(var k in this.data)
+                {
+                    $this.carousel.add(k, this.data[k]);
+                }
+                
+                success(this.data);
+            }, 
+            function(response) 
+            {
+                error(response);
+            }); 
+        }
 
+        // GET request to queue/:sort
         this.getQueue =  function(type, success,error) 
         {
-            $http.get('/api/queue', {params:{sort: type}})
-            .then(function(response) 
-            {
-                parseResponse(response);
-                success(this.data);
-            }, 
-            function(response) 
-            {
-                error(response);
-            });
+            get('/api/queue', {sort: type});
         };
 
+        // GET request to image/:id
         this.getImage =  function(image, success,error) 
         {
-            $http.get('/api/image', {params:{id: image}})
-            .then(function(response) 
-            {
-                parseResponse(response);
-                success(this.data);
-            }, 
-            function(response) 
-            {
-                error(response);
-            });
+            get('/api/image', {id: image});
         };
     }]);
 
+    // HTML template directive
     app.directive("carousel", function() 
     {
       return {
@@ -102,6 +101,8 @@ define([
       };
     });
     
+    // Resize directive. Will update the carousel view whenever the window
+    // resizes
     app.directive('resize', function ($window) {
         return function (scope, element) 
         {
@@ -109,5 +110,4 @@ define([
             angular.element($window).bind('resize', scope.$apply);
         };
     });
-    
 }};});
