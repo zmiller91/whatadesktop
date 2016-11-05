@@ -55,19 +55,24 @@ class Queue extends Service
             $aRootIndex = array();
             $aImages = $ImageTable->getImages($aFileHashes, $mUserId);
 
+            // Group every image by their root
             foreach($aImages as $img)
             {
-                // If the root exists, then update it
-                if(array_key_exists($img['root'], $aRootIndex)){
-                    $index = $aRootIndex[$img['root']];
-                    $aOut[$index][] = $img;
-
-                // Otherwise insert it
-                }else{
-                    $aOut[] = array($img);
-                    $aRootIndex[$img['root']] = sizeof($aOut) - 1;
-
+                if(!isset($aOut[$img['root']]))
+                {
+                    $aOut[$img['root']] = array();
                 }
+                
+                array_push($aOut[$img['root']], $img);
+            }
+            
+            // Sort every image according to their width
+            foreach($aOut as $key => $value)
+            {
+                usort($value, function($a, $b)
+                {
+                    return strcmp($a["width"], $b["width"]);
+                });
             }
             
             $this->m_mData = $aOut;

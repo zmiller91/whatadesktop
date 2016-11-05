@@ -15,19 +15,17 @@ define([
     wad.config(function($routeProvider, $locationProvider) {
         $routeProvider
                
-            .when('/home', {
-                    templateUrl: 'html/whatadesktop.html',
-                    controller: 'CarouselCtrl'
+            .when('/', {
+                    templateUrl: 'html/whatadesktop.html'
             })
             
             .when('/Image(:id)', {
                     templateUrl: 'html/whatadesktop.html',
-                    controller: 'CarouselCtrl',
-                    reloadOnSearch: false
+                    controller: 'CarouselCtrl'
             })
 
             .otherwise({
-                    redirectTo: '/home'
+                    redirectTo: '/'
             });
 
         $locationProvider.html5Mode(true);
