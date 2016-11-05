@@ -83,13 +83,13 @@ define([
         // GET request to queue/:sort
         this.getQueue =  function(type, success,error) 
         {
-            get('/api/queue', {sort: type});
+            $this.get('/api/queue', {sort: type});
         };
 
         // GET request to image/:id
         this.getImage =  function(image, success,error) 
         {
-            get('/api/image', {id: image});
+            $this.get('/api/image', {id: image});
         };
     }]);
 
