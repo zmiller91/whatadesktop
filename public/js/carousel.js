@@ -18,7 +18,23 @@ define([
     app.controller("CarouselCtrl", function (CarouselData, $scope) 
     {
         $scope.carousel = CarouselData.carousel;
-        $scope.current = {};
+        $scope.current = null;
+        
+        $scope.update = function()
+        {
+            if($scope.carousel.currentKey())
+            {
+                $scope.current = $scope.carousel.current()[0];
+                var winDim = getWindowSize();
+                var imgDim = clamp($scope.current.width, 
+                        $scope.current.height, winDim.w, winDim.h);
+
+                $scope.width = imgDim.w;
+                $scope.height = imgDim.h;
+                $scope.windowWidth = winDim.w;
+                $scope.windowHeight = winDim.h;
+            }
+        }
 
         $scope.$watch(
 
@@ -29,21 +45,7 @@ define([
             },
 
             // Update on change
-            function()
-            {
-                if($scope.carousel.currentKey())
-                {
-                    $scope.current = $scope.carousel.current()[0];
-                    var winDim = getWindowSize();
-                    var imgDim = clamp($scope.current.width, 
-                            $scope.current.height, winDim.w, winDim.h);
-
-                    $scope.width = imgDim.w;
-                    $scope.height = imgDim.h;
-                    $scope.windowWidth = winDim.w;
-                    $scope.windowHeight = winDim.h;
-                }
-            }
+            $scope.update
         );
     });
 
@@ -51,7 +53,6 @@ define([
     {
         var $this = this;
         this.carousel = new Carousel();
-        this.sort = "";
         this.response = {};
         this.data = {};
         
@@ -100,4 +101,13 @@ define([
         templateUrl: 'html/carousel.html'
       };
     });
+    
+    app.directive('resize', function ($window) {
+        return function (scope, element) 
+        {
+            scope.$watch(getWindowSize, scope.update, true);
+            angular.element($window).bind('resize', scope.$apply);
+        };
+    });
+    
 }};});

@@ -4,7 +4,35 @@
         background-position: center;
         width: {{windowWidth}}px;
         height: {{windowHeight}}px;">
-    <a href="" class="left-nav col-md-1" ng-click="carousel.previous()"></a>
-    <div class="col-md-10"></div>
-    <a href="" class="right-nav col-md-1" ng-click="carousel.next()"></a>
+    <div>
+        <div ng-show="current" class="pull-left" ng-click="carousel.previous()"
+                style="height: {{windowHeight}}px; cursor: pointer;">
+            <div class="carousel-nav" style="margin-top:{{windowHeight/2-30}}px;
+                    margin-left: 50px; font-size: 60px; opacity: 0.5">
+                <i class="fa fa-chevron-circle-left" style="
+                    color:black;
+                    background: white;
+                    border-radius: 50%;
+                    height: 1em;
+                    width: 1em;
+                   "></i>
+            </div>
+        </div>
+
+
+        <div ng-show="current" class="pull-right" ng-click="carousel.next()"
+                style="height: {{windowHeight}}px; cursor: pointer;">
+            <div class="carousel-nav" style="margin-top:{{windowHeight/2-30}}px;
+                    margin-right: 50px; font-size: 60px; opacity: 0.5">
+                <i class="fa fa-chevron-circle-right" style="
+                    color:black;
+                    background: white;
+                    border-radius: 50%;
+                    height: 1em;
+                    width: 1em;
+                   "></i>
+            </div>
+        </div>
+    </div>
+    
 </header>

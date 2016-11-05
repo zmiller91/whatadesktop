@@ -106,69 +106,6 @@ transition: opacity 2s ease-in; /* vendorless fallback */
   padding: 0 40px 30px 40px;
   margin-top: 30px;
 }
-/* Previous button  */
-.left-nav:hover 
-{
-  float: left;
-  padding:0;
-  margin:0;
-  height:100%;
-  opacity: 0.55;
-  font-size: 250%;
-  color: #66FF33;
-  cursor: pointer;
-  content: linear-gradient(90deg, #000000, #202020);
-  
-
-    
-transition: opacity 0.2s ease-in; /* vendorless fallback */
--o-transition: opacity 0.2s ease-in; /* opera */
--ms-transition: opacity 0.2s ease-in; /* IE 10 */
--moz-transition: opacity  0.2s ease-in; /* Firefox */
--webkit-transition: opacity 0.2s ease-in; /*safari and chrome */
-
-}
-
-.left-nav
-{
-  float: left;
-  padding:0;
-  margin:0;
-  opacity: 0;
-  font-size: 250%;
-  color: #66FF33;
-  
-  content: linear-gradient(90deg, #000000, #202020);
-
-}
-
-.right-nav:hover 
-{
-  padding:0; 
-  margin:0;
-  opacity: 0.5;
-  font-size: 250%;
-  cursor: pointer;
-  content: linear-gradient(90deg, #202020, #000000);
-  
-    transition: opacity 0.2s ease-in; /* vendorless fallback */
-    -o-transition: opacity 0.2s ease-in; /* opera */
-    -ms-transition: opacity 0.2s ease-in; /* IE 10 */
-    -moz-transition: opacity  0.2s ease-in; /* Firefox */
-    -webkit-transition: opacity 0.2s ease-in; /*safari and chrome */
-
-}
-
-/* Next button  */
-.right-nav 
-{
-  padding:0; 
-  margin:0;
-  float: right;
-  opacity: 0;
-  font-size: 250%;
-  content: linear-gradient(90deg, #202020, #000000);
-}
 /* Changes the position of the indicators */
 .media-carousel .carousel-indicators 
 {
