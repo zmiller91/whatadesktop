@@ -9,19 +9,26 @@
     $uri = preg_replace("/^" . preg_quote($publicDirectory, "/") . "/", "", $requestURI);
     $uri =  trim($uri, "/");
     
-    // If this isn't an api call, then return main.html
-    $apiRegex = "/^" . preg_quote("api/", "/") . "/";
-    if(preg_match($apiRegex, $uri) === 0)
+    // If this request if for index.php, return the main html
+    if($uri == "" || $uri == "index.php")
     {
         readfile('html/main.html');
         return;
     }
     
-    // Ensure the requested service exists
+    // If it's not an api call, then its a 404
+    $apiRegex = "/^" . preg_quote("api/", "/") . "/";
+    if(preg_match($apiRegex, $uri) === 0)
+    {
+        http_response_code(404);
+        return;
+    }
+    
+    // If the service doesnt exist, then its a 404
     $class = preg_replace($apiRegex, "", $uri);
     if(!class_exists($class))
     {
-        http_response_code(400);
+        http_response_code(404);
         return;
     }
     

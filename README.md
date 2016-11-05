@@ -1,9 +1,10 @@
 Submodules:
 
-    * https://github.com/zmiller91/php-common
-    * https://github.com/zmiller91/js-common
-    * https://github.com/requirejs/requirejs
-
+* https://github.com/zmiller91/php-common
+* https://github.com/zmiller91/js-common
+* https://github.com/requirejs/requirejs
+* https://github.com/daneden/animate.css
+* https://github.com/BlackrockDigital/startbootstrap-creative
 
 Additions to `httpd.conf`
 

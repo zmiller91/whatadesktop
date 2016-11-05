@@ -1,10 +1,9 @@
-
-<button ng-click="previous()">previous</button>...<button ng-click="next()">next</button>
 <header style="background-image: url({{current.path}}); 
         background-size: {{width}}px {{height}}px; 
         background-repeat: no-repeat; 
         background-position: center;
-        height: {{height}}px; width: {{width}}px;">
+        width: {{windowWidth}}px;
+        height: {{windowHeight}}px;">
     <a href="" class="left-nav col-md-1" ng-click="previous()"></a>
     <div class="col-md-10"></div>
     <a href="" class="right-nav col-md-1" ng-click="next()"></a>

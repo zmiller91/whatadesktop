@@ -7,3 +7,9 @@
 [submodule "public/lib/js-common"]
 	path = public/lib/js-common
 	url = https://github.com/zmiller91/js-common
+[submodule "public/lib/startbootstrap-creative"]
+	path = public/lib/startbootstrap-creative
+	url = https://github.com/BlackrockDigital/startbootstrap-creative
+[submodule "public/lib/animate.css"]
+	path = public/lib/animate.css
+	url = https://github.com/daneden/animate.css

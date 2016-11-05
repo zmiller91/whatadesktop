@@ -1,5 +1,6 @@
 define([
-    "../lib/js-common/Carousel"
+    "../lib/js-common/Carousel",
+    "js/utilities.js"
 ], function() {
     return {
         init: function(app) {
@@ -40,60 +41,14 @@ define([
                     $scope.id = CarouselData.carousel.currentKey();
                     $location.path('/Image(' + $scope.id + ")");
                 }
-                
-                getWindowDimensions = function () {
-                    return {
-                        'h': window.innerHeight,
-                        'w': window.innerWidth
-                    };
-                };
-                
-                getImageDimensions = function(img, width, height){
-        
-                    //get the dimensions
-                    var window = {w: width, h: height};
-                    var iImgWidth = parseInt(img.width);
-                    var iImgHeight = parseInt(img.height);
-
-                    //gotta do this twice to ensure both dimensions are in view
-                    //this helps when h > 0 and w < 0 or the other way around
-                    for (i = 0; i < 2; i++) {
-
-                        //get the differences and aspect ratio
-                        var iWDiff = window.w - iImgWidth;
-                        var iHDiff = window.h - iImgHeight;
-                        var iRatio = iImgWidth / iImgHeight;
-
-                        //but only try twice if one of the dimensions is larger
-                        //than the screen
-                        if(i === 1 && (iWDiff > 0 || iHDiff > 0)){
-                            break;
-                        }
-
-                        //solve for height
-                        if (Math.abs(iWDiff) > Math.abs(iHDiff)){
-                            var w = iImgWidth + iWDiff;
-                            var h = iImgHeight + iWDiff * 1/iRatio;
-                            iImgWidth = w;
-                            iImgHeight = h;
-
-                        //solve for width
-                        }else{
-                            var w = iImgWidth + iHDiff * iRatio;
-                            var h = iImgHeight + iHDiff;
-                            iImgHeight = h;
-                            iImgWidth = w;
-                        }
-                    }
-
-                    return {w: iImgWidth, h: iImgHeight};
-                };
 
                 setDimensions = function(img){
-                    var winDim = getWindowDimensions();
-                    var imgDim = getImageDimensions(img, winDim.w, winDim.h);
+                    var winDim = getWindowSize();
+                    var imgDim = clamp(img.width, img.height, winDim.w, winDim.h);
                     $scope.width = imgDim.w;
                     $scope.height = imgDim.h;
+                    $scope.windowWidth = winDim.w;
+                    $scope.windowHeight = winDim.h;
                 };
                 
                 $scope.next = function()
