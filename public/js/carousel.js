@@ -81,15 +81,15 @@ define([
         }
 
         // GET request to queue/:sort
-        this.getQueue =  function(type, success,error) 
+        this.getQueue =  function(type, success, error) 
         {
-            $this.get('/api/queue', {sort: type});
+            $this.get('/api/queue', {sort: type}, success, error);
         };
 
         // GET request to image/:id
-        this.getImage =  function(image, success,error) 
+        this.getImage =  function(image, success, error) 
         {
-            $this.get('/api/image', {id: image});
+            $this.get('/api/image', {id: image}, success, error);
         };
     }]);
 
