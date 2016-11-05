@@ -52,33 +52,14 @@ define([
 
     // Main service for the carousel. This service holds the Carousel data
     // object and is responsible for retrieving carousel data from the server
-    app.service('CarouselData', ['$http', function($http) 
+    app.service('CarouselData', ['$rootScope', '$http', function($rootScope, $http) 
     {
         var $this = this;
-        this.carousel = new Carousel();
-        this.response = {};
         this.data = {};
+        this.response = {};
         
-        // Generic GET request. Should only be used for carousel data.
-        this.get = function(url, params, success, error)
-        {
-            $http.get(url, {params:params})
-            .then(function(response) 
-            {
-                this.response = response;
-                this.data = response.data;
-                for(var k in this.data)
-                {
-                    $this.carousel.add(k, this.data[k]);
-                }
-                
-                success(this.data);
-            }, 
-            function(response) 
-            {
-                error(response);
-            }); 
-        }
+        this.carousel = new Carousel();
+        this._preloadedKeys = {};
 
         // GET request to queue/:sort
         this.getQueue =  function(type, success, error) 
@@ -91,6 +72,63 @@ define([
         {
             $this.get('/api/image', {id: image}, success, error);
         };
+        
+        // Generic GET request. Should only be used for carousel data.
+        this.get = function(url, params, success, error)
+        {
+            $http.get(url, {params:params})
+            .then(function(response) 
+            {
+                $this.response = response;
+                $this.data = response.data;
+                for(var k in $this.data)
+                {
+                    $this.carousel.add(k, $this.data[k]);
+                }
+                
+                
+                $this.preload();
+                success($this.data);
+            }, 
+            function(response) 
+            {
+                error(response);
+            }); 
+        }
+        
+        // Method for preloading the next and previous images
+        this.preload = function()
+        {
+            var keys = $this.carousel.preview(-5)
+                    .concat($this.carousel.preview(6));
+            
+            for(var k in keys)
+            {
+                k = keys[k]
+                if(!(k in $this._preloadedKeys))
+                {
+                    var url = $this.carousel.get(k)[0]["path"];
+                    $this.load(k, url);
+                    
+                }
+            }
+        };
+        
+        this.load = function(key, url)
+        {
+            var image = new Image();
+            image.src = url;
+            $this._preloadedKeys[key] = true;
+        };
+        
+        // Watch for changes in the current image, preload the next images 
+        // if there are any changes
+        $rootScope.$watch(
+            function(scope)
+            {
+                return $this.carousel.currentKey();
+            }, $this.preload);
+        
     }]);
 
     // HTML template directive
