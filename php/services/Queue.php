@@ -53,7 +53,7 @@ class Queue extends Service
         {  
             $aOut = array();
             $aRootIndex = array();
-            $aImages = $ImageTable->getImages($aFileHashes, $mUserId);
+            $aImages = $ImageTable->getImageQueue($aFileHashes, $mUserId);
 
             // Group every image by their root
             foreach($aImages as $img)

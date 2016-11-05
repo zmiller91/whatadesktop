@@ -142,7 +142,7 @@ EOD;
         return $this->execute($sql);
     }
     
-    public function getImages($aFileHashes, $iUser = null){
+    public function getImageQueue($aFileHashes, $iUser = null){
         
         // set defaults...dont really like $strStatusSQL...
         $strJoinSQL = '';
@@ -197,11 +197,12 @@ EOD
         );
     }
     
-    public function getImgIds($root){
+    public function getImage($root){
         return $this->execute(
 <<<EOD
-        SELECT id from images
-        WHERE root = "$root";
+        SELECT * from images
+        WHERE root = "$root"
+        ORDER BY width DESC;
 EOD
         );
     }

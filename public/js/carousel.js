@@ -1,107 +1,103 @@
 define([
     "../lib/js-common/Carousel",
     "js/utilities.js"
-], function() {
-    return {
-        init: function(app) {
-            
-            app.controller("CarouselCtrl", function (CarouselData, $scope, 
-                    $routeParams, $location) {
-                
-                $scope.id = $routeParams.id;
-                $scope.current = "fuck";
-                
-                if($scope.id != null)
-                {
-                    if(CarouselData.carousel.contains($scope.id))
-                    {
-                        CarouselData.carousel.seekTo($scope.id);
-                        $scope.id = CarouselData.carousel.currentKey();
-                        $scope.current = CarouselData.carousel.current()[0];
-                        setDimensions($scope.current);
-                    }
-                    else
-                    {
-                        CarouselData.carousel.add($scope.id, $scope.id)
-                        $scope.id = CarouselData.carousel.currentKey();
-                        $scope.current = CarouselData.carousel.current()[0];
-                        setDimensions($scope.current);
-                    }
-                }
-                else
-                {   
-                    CarouselData.get(function(){
-                        this.update();
-                    }, function(){});
-                    
-                }
+], function(){return{init: function(app) {
 
-                update = function()
-                {
-                    $scope.id = CarouselData.carousel.currentKey();
-                    $location.path('/Image(' + $scope.id + ")");
-                }
+    app.controller("ImageCtrl", function(CarouselData, $routeParams)
+    {
+        // Get the image from the server   
+        CarouselData.getImage($routeParams.id, function(){}, function(){}); 
+    });
 
-                setDimensions = function(img){
+    app.controller("QueueCtrl", function(CarouselData, $routeParams)
+    {
+        // Get the queue from the server   
+        CarouselData.getQueue($routeParams.sort, function(){}, function(){});        
+    });
+
+    app.controller("CarouselCtrl", function (CarouselData, $scope) 
+    {
+        $scope.carousel = CarouselData.carousel;
+        $scope.current = {};
+
+        $scope.$watch(
+
+            // Variable to watch
+            function($scope)
+            {
+                return $scope.carousel.currentKey();
+            },
+
+            // Update on change
+            function()
+            {
+                if($scope.carousel.currentKey())
+                {
+                    $scope.current = $scope.carousel.current()[0];
                     var winDim = getWindowSize();
-                    var imgDim = clamp(img.width, img.height, winDim.w, winDim.h);
+                    var imgDim = clamp($scope.current.width, 
+                            $scope.current.height, winDim.w, winDim.h);
+
                     $scope.width = imgDim.w;
                     $scope.height = imgDim.h;
                     $scope.windowWidth = winDim.w;
                     $scope.windowHeight = winDim.h;
-                };
-                
-                $scope.next = function()
-                {
-                    CarouselData.carousel.next();
-                    update();
                 }
-                
-                $scope.previous = function()
-                {
-                    CarouselData.carousel.previous();
-                    update();
-                }
-                
-                $scope.deleteCurrent = function()
-                {
-                    CarouselData.carousel.deleteCurrent();
-                    update();
-                }  
-            })
+            }
+        );
+    });
 
-            .directive("carousel", function() {
-              return {
-                templateUrl: 'html/carousel.html'
-              };
-            })
+    app.service('CarouselData', ['$http', function($http) 
+    {
+        var $this = this;
+        this.carousel = new Carousel();
+        this.sort = "";
+        this.response = {};
+        this.data = {};
+        
+        parseResponse = function(response)
+        {
+            this.response = response;
+            this.data = response.data;
+            for(var k in this.data)
+            {
+                $this.carousel.add(k, this.data[k]);
+            }
+        };
 
-            .service('CarouselData', ['$rootScope', '$http', function($rootScope, $http) {
-                var $this = this;
-                this.carousel = new Carousel();
-                this.response = {};
-                this.data = {};
-                this.get =  function(success,error) 
-                {
-                    $http.get('/api/queue', {params:{sort: "random"}})
-                        .then(function(response) 
-                            {
-                                this.response = response;
-                                this.data = response.data;
-                                for(var k in this.data)
-                                {
-                                    $this.carousel.add(k, this.data[k]);
-                                }
+        this.getQueue =  function(type, success,error) 
+        {
+            $http.get('/api/queue', {params:{sort: type}})
+            .then(function(response) 
+            {
+                parseResponse(response);
+                success(this.data);
+            }, 
+            function(response) 
+            {
+                error(response);
+            });
+        };
 
-                                success(this.data);
-                            }, 
-                            function(response) 
-                            {
-                                error(response);
-                            }
-                        );
-                };
-            }]);
-        }
-    };
-});
+        this.getImage =  function(image, success,error) 
+        {
+            $http.get('/api/image', {params:{id: image}})
+            .then(function(response) 
+            {
+                parseResponse(response);
+                success(this.data);
+            }, 
+            function(response) 
+            {
+                error(response);
+            });
+        };
+    }]);
+
+    app.directive("carousel", function() 
+    {
+      return {
+        templateUrl: 'html/carousel.html'
+      };
+    });
+}};});

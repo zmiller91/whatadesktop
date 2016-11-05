@@ -14,18 +14,19 @@ define([
 
     wad.config(function($routeProvider, $locationProvider) {
         $routeProvider
-               
-            .when('/', {
-                    templateUrl: 'html/whatadesktop.html'
+                  
+            .when('/image/:id', {
+                    templateUrl: 'html/whatadesktop.html',
+                    controller: 'ImageCtrl'
             })
             
-            .when('/Image(:id)', {
+            .when('/queue/:sort', {
                     templateUrl: 'html/whatadesktop.html',
-                    controller: 'CarouselCtrl'
+                    controller: 'QueueCtrl'
             })
 
             .otherwise({
-                    redirectTo: '/'
+                    redirectTo: '/queue/random'
             });
 
         $locationProvider.html5Mode(true);
