@@ -1,16 +1,17 @@
 define([
-    'carousel',
+    '../lib/js-common/user/user',
+    'carousel'
 ],
 
-  function(carousel){
+  function(user, carousel){
       
     // Create the base module for the page
-    var wad = angular.module('whatadesktop', ['ngRoute']);
+    var wad = angular.module('whatadesktop', ['ngRoute', 'ui.bootstrap']);
     
     // Init the controllers, directives, and services for all the components
     // on the page
+    user.init(wad);
     carousel.init(wad);
-
 
     wad.config(function($routeProvider, $locationProvider) {
         $routeProvider
