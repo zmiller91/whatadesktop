@@ -70,7 +70,11 @@ define([
                 case 37: // Let Key
                 case 65: // A
                     $scope.carousel.previous();
-                    break;   
+                    break;  
+                
+                case 82:
+                    $route.reload();
+                    break;
             }
         };
 
