@@ -23,10 +23,6 @@ define([
 
         $scope.$on('user:updated', function(event, data) {
             $scope.user = User;
-//            if($scope.user.authorizationFinished)
-//            {
-//                $scope.display = true;
-//            }
         });
         
         
@@ -52,7 +48,6 @@ define([
                 if($scope.carousel.currentKey())
                 {
                     $scope.current = $scope.carousel.current();
-                    console.log($scope.current[0]["root"]);
                 }
             }
         );
