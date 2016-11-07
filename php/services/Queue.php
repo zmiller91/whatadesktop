@@ -20,6 +20,7 @@ class Queue extends Service
     
     protected function authorize() 
     {
+        $this->m_oUser->authorize();
         return true;
     }
 
@@ -60,11 +61,14 @@ class Queue extends Service
         }
 
         // Sort every image according to their width
-        foreach($aOut as $key => $value)
+        foreach($aOut as &$value)
         {
             usort($value, function($a, $b)
             {
-                return strcmp($a["width"], $b["width"]);
+                $a = $a["width"];
+                $b = $b["width"];
+                return ($a > $b) ? -1 : (($a < $b) ? 1 : 0);
+                
             });
         }
 

@@ -21,6 +21,7 @@ class Image extends Service
     
     protected function authorize() 
     {
+        $this->m_oUser->authorize();
         return true;
     }
     
@@ -46,7 +47,10 @@ class Image extends Service
             // Sort every image according to their width
             usort($aImages, function($a, $b)
             {
-                return strcmp($a["width"], $b["width"]);
+                $a = $a["width"];
+                $b = $b["width"];
+                return ($a > $b) ? -1 : (($a < $b) ? 1 : 0);
+                
             });
             
             $this->m_mData = array($aImages[0]["root"] => $aImages);

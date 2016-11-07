@@ -152,6 +152,12 @@ EOD;
         
         $roots = $this->getRoots($sort, $limit, $iUser);
         $rootList = $this->generateIn("root", $roots);
+        $bRandomize = $sort != "saved" && $sort != "deleted";
+        $strRandomSql = !$bRandomize ? "" :
+<<<EOD
+            ORDER BY RAND()
+EOD;
+        
         $sql = 
 <<<EOD
             SELECT 
@@ -165,7 +171,8 @@ EOD;
             LEFT JOIN img_status 
                 ON id = img_id 
                 AND user = $iUser
-            WHERE root IN $rootList;
+            WHERE root IN $rootList
+                $strRandomSql;
 EOD;
         $aOut = $this->execute($sql);
         return isset($aOut) ? $aOut : array();
