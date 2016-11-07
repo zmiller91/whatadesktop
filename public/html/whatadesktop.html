@@ -1,14 +1,91 @@
 <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
-    <div class="container-fluid">
+    <div class="container-fluid" ng-controller="NavCtrl">
 
         <!--Site Name-->
         <div class="navbar-header">
-            <a class="navbar-brand page-scroll" href="/queue/random">whatadesktop</a>
+            <a class="navbar-brand page-scroll" ng-click="goto('/queue/random')" 
+               style="cursor: pointer;">
+                whatadesktop
+            </a>
         </div>
-
+        
         <!--Site Pages-->
-        <ul class="nav navbar-nav navbar-right">
+        <ul ng-show="display" class="nav navbar-nav navbar-right">
 
+            
+            <!--Save and Remove options, without tooltips-->
+            <li ng-show="user.loggedIn" style="cursor: pointer;">
+                <div style="color:#777;">
+                    <button ng-show="true" class="btn" type="button" ng-click="">
+                        Save
+                    </button>
+                    <button ng-show="false" class="btn" type="button" ng-click=""
+                             style="cursor: default;">
+                        Saved
+                    </button>
+                </div>
+            </li>
+
+            <li ng-show="user.loggedIn" style="cursor: pointer;">
+                <div style="color:#777;">
+                    <button ng-show="true" class="btn" type="button" ng-click="">
+                        Remove
+                    </button>
+                    <button ng-show="false" class="btn" type="button" ng-click=""
+                             style="cursor: default;">
+                        Removed
+                    </button>
+                </div>
+            </li>
+                            
+            <!-- Saved and Remove options, with tooltips -->
+            <li ng-show="!user.loggedIn" data-toggle="tooltip" data-placement="bottom"
+                title="Login in to save images">
+                <div style="color:#777;">
+                    <button class="btn" type="button" ng-click=""
+                            style="cursor: default; color:#777;">
+                    Save
+                    </button>
+                </div>
+            </li>
+            
+            <li ng-show="!user.loggedIn" data-toggle="tooltip" data-placement="bottom"
+                title="Login in to remove images from queue">
+                <div style="color:#777;">
+                    <button class="btn" type="button" ng-click=""
+                            style="cursor: default; color:#777;">
+                    Remove
+                    </button>
+                </div>
+            </li>
+            
+            
+
+            <!--Download-->
+            <li>
+                <div class="dropdown">
+                  <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Download
+                  <span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li><a ng-repeat="c in current" href="{{c.path}}" download="" target="_blank">{{c.width}}x{{c.height}}</a></li>
+                  </ul>
+                </div>
+            </li>
+
+            <!--Queues-->
+            <li>
+                <div class="dropdown">
+                  <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Queues
+                  <span class="caret"></span></button>
+                  <ul class="dropdown-menu" style="cursor: pointer;">
+                    <li><a ng-click="goto('/queue/random')">Random</a></li>
+                    <li><a ng-click="goto('/queue/new')">New</a></li>
+                    <li><a ng-click="goto('/queue/popular')">Popular</a></li>
+                    <li><a ng-click="goto('/queue/unpopular')">Unpopular</a></li>
+                  </ul>
+                </div>
+            </li>
+            
             <!--User-->
                 <li>
                     <div class="dropdown" ng-controller="UserCtrl">
@@ -16,19 +93,43 @@
                             {{user.name ? user.name : "User"}}
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu">
-                            <li><a ng-click="changeView('user_imgs'); getBackgrounds({sort: 'saved'});">Saved</a></li>
-                            <li><a ng-click="changeView('user_imgs'); getBackgrounds({sort: 'deleted'});">Deleted</a></li>
-                            <li><a ng-click="register()">Register</a></li>
-                            <li><a ng-click="login()">Login</a></li>
-                            <li><a ng-click="logout()">Log Out</a></li>
+                        <ul class="dropdown-menu" style="cursor: pointer;">
+                            <li><a ng-show="!user.loggedIn" ng-click="register()">Register</a></li>
+                            <li><a ng-show="!user.loggedIn"  ng-click="login()">Login</a></li>
+                            <li><a ng-show="user.loggedIn"  ng-click="">Saved</a></li>
+                            <li><a ng-show="user.loggedIn"  ng-click="">Removed</a></li>
+                            <li><a ng-show="user.loggedIn"  ng-click="logout()">Log Out</a></li>
+                            
+                            <!-- Saved and Deleted options, with tooltips -->
+                            <li ng-show="!user.loggedIn" data-toggle="tooltip" 
+                                data-placement="left" style="cursor: default;"
+                                title="Login to view saved images">
+                                <a style="color:#777; background-color: #f5f5f5;">
+                                    Saved
+                                </a>
+                            </li>
+                            <li ng-show="!user.loggedIn" data-toggle="tooltip" 
+                                data-placement="left" style="cursor: default;"
+                                title="Login to view removed images">
+                                <a style="color:#777; background-color: #f5f5f5;">
+                                    Removed
+                                </a>
+                            </li>
+                            
                         </ul>
+                        
                     </div>
                 </li>
 
         </ul>
     </div>
+                        
+    <!-- Initialize tooltips -->
+    <script>
+        $('[data-toggle="tooltip"]').tooltip()
+    </script>
 </nav>
 
 
 <div ng-controller="CarouselCtrl" carousel resize></div>
+

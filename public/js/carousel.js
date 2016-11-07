@@ -6,18 +6,23 @@ define([
     // Controller for the image/:id route
     app.controller("ImageCtrl", function(CarouselData, $routeParams)
     {
+        CarouselData.carousel.reset();
         CarouselData.getImage($routeParams.id, function(){}, function(){}); 
     });
 
     // Controller for the queue/:sort route
     app.controller("QueueCtrl", function(CarouselData, $routeParams)
     {
+        CarouselData.carousel.reset();
         CarouselData.getQueue($routeParams.sort, function(){}, function(){});        
     });
 
     // Main carousel controller
     app.controller("CarouselCtrl", function (CarouselData, $scope) 
     {
+        var winDim = getWindowSize();
+        $scope.windowWidth = winDim.w;
+        $scope.windowHeight = winDim.h;
         $scope.carousel = CarouselData.carousel;
         $scope.current = null;
         

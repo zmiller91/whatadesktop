@@ -94,6 +94,14 @@ transition: opacity 2s ease-in; /* vendorless fallback */
     padding: 16px 15px;
 }
 
+.navbar-default .btn:focus {
+    outline:0;
+}
+
+.navbar-default .btn:hover {
+    color:white;
+}
+
 .ctrl-menu{
     position: fixed;
     bottom: 0;

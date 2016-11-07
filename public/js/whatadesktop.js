@@ -1,9 +1,10 @@
 define([
     '../lib/js-common/user/user',
-    'carousel'
+    'carousel',
+    'navigation'
 ],
 
-  function(user, carousel){
+  function(user, carousel, nav){
       
     // Create the base module for the page
     var wad = angular.module('whatadesktop', ['ngRoute', 'ui.bootstrap']);
@@ -12,6 +13,8 @@ define([
     // on the page
     user.init(wad);
     carousel.init(wad);
+    nav.init(wad);
+    
 
     wad.config(function($routeProvider, $locationProvider) {
         $routeProvider
