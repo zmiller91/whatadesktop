@@ -18,7 +18,7 @@ define([
     });
 
     // Main carousel controller
-    app.controller("CarouselCtrl", function (CarouselData, $scope) 
+    app.controller("CarouselCtrl", function (CarouselData, $scope, $route) 
     {
         var winDim = getWindowSize();
         $scope.windowWidth = winDim.w;
@@ -43,6 +43,36 @@ define([
                 $scope.windowHeight = winDim.h;
             }
         }
+        
+        
+        // Enable hotkeys so a user can navigate the carousel without using a
+        // mouse.  Allow the user to scroll left and right as well as save or
+        // remove images
+        $scope.keypress = function(keyEvent)
+        {
+            switch(keyEvent.keyCode) 
+            {
+                case 38: // Up Arrow
+                case 87: // W
+                    //TODO: 
+                    break;
+
+                case 40: // Down Array
+                case 83:// S
+                    $scope.carousel.deleteCurrent();
+                    break;
+
+                case 39: // Right Key
+                case 68: // D
+                    $scope.carousel.next();
+                    break;
+
+                case 37: // Let Key
+                case 65: // A
+                    $scope.carousel.previous();
+                    break;   
+            }
+        };
 
         // Watch for changes in the carousel, if the current image changes then
         // update the carousel view
@@ -53,6 +83,10 @@ define([
             },
             $scope.update
         );
+
+        // Focus on the carousel object to enable hotkeys 
+        $( "#carousel" ).focus();
+
     });
 
     // Main service for the carousel. This service holds the Carousel data

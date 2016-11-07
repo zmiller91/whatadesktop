@@ -28,10 +28,10 @@
 
             <li ng-show="user.loggedIn" style="cursor: pointer;">
                 <div style="color:#777;">
-                    <button ng-show="true" class="btn" type="button" ng-click="">
+                    <button ng-show="current.status == 0" class="btn" type="button" ng-click="">
                         Remove
                     </button>
-                    <button ng-show="false" class="btn" type="button" ng-click=""
+                    <button ng-show="current.status == 1" class="btn" type="button" ng-click=""
                              style="cursor: default;">
                         Removed
                     </button>
@@ -131,5 +131,5 @@
 </nav>
 
 
-<div ng-controller="CarouselCtrl" carousel resize></div>
+<div id="carousel" ng-controller="CarouselCtrl" carousel resize  ng-keydown="keypress($event)"  tabindex="0"></div>
 
