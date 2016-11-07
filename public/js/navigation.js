@@ -43,7 +43,13 @@ define([
         $scope.$watch(
             function($scope)
             {
-                return $scope.carousel.currentKey();
+                if($scope.carousel.current() 
+                        && $scope.carousel.current().length > 0)
+                {
+                    return $scope.carousel.current()[0]["status"];
+                }
+                
+                return null;
             },
             function()
             {

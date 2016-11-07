@@ -18,7 +18,7 @@ define([
     });
 
     // Main carousel controller
-    app.controller("CarouselCtrl", function (CarouselData, $scope, $route) 
+    app.controller("CarouselCtrl", function (User, CarouselData, $scope, $route) 
     {
         var winDim = getWindowSize();
         $scope.windowWidth = winDim.w;
@@ -43,7 +43,6 @@ define([
                 $scope.windowHeight = winDim.h;
             }
         }
-        
         
         // Enable hotkeys so a user can navigate the carousel without using a
         // mouse.  Allow the user to scroll left and right as well as save or
@@ -77,6 +76,14 @@ define([
                     break;
             }
         };
+        
+        // Fetch user's root images, if a user is logged in
+        $scope.$on('user:loggedin', function(event, data) {
+            if(data["loggedIn"])
+            {
+                CarouselData.getUserRoots();
+            }
+        });
 
         // Watch for changes in the carousel, if the current image changes then
         // update the carousel view
@@ -100,6 +107,7 @@ define([
         var $this = this;
         this.data = {};
         this.response = {};
+        this.userRoots = [];
         
         this.carousel = new Carousel();
         this._preloadedKeys = {};
@@ -129,14 +137,53 @@ define([
                     $this.carousel.add(k, $this.data[k]);
                 }
                 
-                
                 $this.preload();
                 success($this.data);
             }, 
             function(response) 
             {
                 error(response);
-            }); 
+            });
+        }
+        
+        // Get the user's list of saved and deleted roots, update the carousel
+        // images accordingly
+        this.getUserRoots = function(success, error)
+        {
+            $http.get("/api/imagestatus")
+            .then(function(response) 
+            {
+                // Iterate over every saved or deleted root
+                $this.userRoots = response.data;
+                for(var r in $this.userRoots)
+                {
+                    // If a saved or deleted root exists in the carousel, then
+                    // update its status
+                    var root = response.data[r];
+                    var images = $this.carousel.get(root["root"]);
+                    if(images)
+                    {
+                        for(var i in images)
+                        {
+                            images[i]["status"] = root["status"];
+                        }
+
+                        $this.carousel.add(root["root"], images);
+                    }
+                }
+                
+                if(success)
+                {
+                    success($this.data);
+                }
+            }, 
+            function(response) 
+            {
+                if(error)
+                {
+                    error(response);
+                }
+            });
         }
         
         // Method for preloading the next and previous images
