@@ -27,6 +27,9 @@ define([
             $scope.user = User;
         });
         
+        $scope.$on('user:loggedout', function(event, data) {
+            $scope.goto("/queue/random");
+        });
         
         $scope.$watch(
             function($scope)
