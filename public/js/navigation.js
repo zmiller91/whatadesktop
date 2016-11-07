@@ -10,6 +10,8 @@ define([
         $scope.user = User;
         $scope.carousel = CarouselData.carousel;
         $scope.current = $scope.carousel.current();
+        $scope.saved = false;
+        $scope.deleted = false;
 
         $scope.goto = function(path)
         {
@@ -48,6 +50,11 @@ define([
                 if($scope.carousel.currentKey())
                 {
                     $scope.current = $scope.carousel.current();
+                    if($scope.current.length > 0)
+                    {
+                        $scope.saved = $scope.current[0]["status"] === "1";
+                        $scope.deleted = $scope.current[0]["status"] === "-1";
+                    }
                 }
             }
         );

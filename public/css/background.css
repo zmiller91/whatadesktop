@@ -98,8 +98,14 @@ transition: opacity 2s ease-in; /* vendorless fallback */
     outline:0;
 }
 
-.navbar-default .btn:hover {
+.navbar-default .btn:hover:not(.mute) {
     color:white;
+}
+
+.navbar-default .btn.mute
+{
+    cursor: default; 
+    color:#777;
 }
 
 .ctrl-menu{

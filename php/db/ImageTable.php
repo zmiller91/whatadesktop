@@ -29,149 +29,146 @@ class ImageTable extends BaseTable{
         return $sql;
     }
     
-    private function getNewSql($iUser = null){
-        
-        $strUserAnd = $iUser ? "AND img_status.user = $iUser" : "";
-        
-        //should be ordering by a date
+    private function getNewRoots($limit, $iUser = -1)
+    {
         return
 <<<EOD
-        SELECT DISTINCT root FROM images
-        LEFT JOIN img_status 
-        ON images.id = img_status.img_id
-        $strUserAnd
-        WHERE img_status.img_id IS NULL
-        ORDER BY id DESC
-        LIMIT 100;
+            SELECT DISTINCT root 
+            FROM images
+            WHERE root NOT IN (
+                    SELECT DISTINCT img_root
+                    FROM img_status
+                    WHERE status = -1
+                    AND user = $iUser
+            )
+            ORDER BY id DESC
+            LIMIT $limit;
 EOD;
     }
     
-    private function getRandomSQL($iUser = null){
-        
-        $strUserAnd = $iUser ? "AND img_status.user = $iUser" : "";
-        
+    private function getRandomRoots($limit, $iUser = -1)
+    {
         return
 <<<EOD
-        SELECT DISTINCT root FROM images
-        LEFT JOIN img_status 
-        ON images.id = img_status.img_id
-        $strUserAnd
-        WHERE img_status.img_id IS NULL
-        ORDER BY RAND()
-        LIMIT 100;
+            SELECT DISTINCT root 
+            FROM images
+            WHERE root NOT IN (
+                    SELECT DISTINCT img_root
+                    FROM img_status
+                    WHERE status = -1
+                    AND user = $iUser
+            )
+            ORDER BY RAND()
+            LIMIT $limit;
 EOD;
     }
     
-    private function getPopularSQL(){
+    private function getPopularRoots($limit)
+    {
         return
 <<<EOD
-        SELECT root FROM img_status
-        LEFT JOIN images 
-        ON  img_status.img_id = images.id
-        GROUP BY images.root
-        HAVING sum(img_status.status) > 0
-        ORDER BY sum(img_status.status) DESC
-        LIMIT 100;
+            SELECT img_root as root
+            FROM img_status
+            GROUP BY img_root
+            ORDER BY SUM(status) DESC
+            limit $limit;
 EOD;
     }
     
-    private function getUnPopularSQL(){
+    private function getUnPopularRoots($limit)
+    {
         return
 <<<EOD
-        SELECT root FROM img_status
-        LEFT JOIN images 
-        ON  img_status.img_id = images.id
-        GROUP BY images.root
-        HAVING sum(img_status.status) < 0
-        ORDER BY sum(img_status.status) ASC
-        LIMIT 100;
+            SELECT img_root
+            FROM img_status
+            GROUP BY img_root
+            ORDER BY SUM(status) ASC
+            LIMIT $limit;
 EOD;
     }
     
-    private function getSavedSQL($iUser){
+    private function getSavedRoots($iUser = -1){
         return
 <<<EOD
-        SELECT root FROM images
-        LEFT JOIN img_status 
-        ON images.id = img_status.img_id
-        WHERE img_status.user = $iUser
-        AND img_status.status = 1;
+            SELECT DISTINCT img_root as root
+            FROM img_status
+            WHERE status = 1
+            AND user = $iUser;
 EOD;
     }
     
-    private function getDeletedSQL($iUser){
+    private function getDeletedRoots($iUser = -1){
         return
 <<<EOD
-        SELECT root FROM images
-        LEFT JOIN img_status 
-        ON images.id = img_status.img_id
-        WHERE img_status.user = $iUser
-        AND img_status.status = -1;
+            SELECT DISTINCT img_root as root
+            FROM img_status
+            WHERE status = -1
+            AND user = $iUser;
 EOD;
     }
     
-    public function getImageHashes($strSortMethod, $iUser = null){
-
+    public function getRoots($strSortMethod, $limit, $iUser = -1)
+    {
         $sql = "";
         switch($strSortMethod){
 
             case "new":
-                $sql = $this->getNewSql($iUser);
+                $sql = $this->getNewRoots($limit, $iUser);
                 break;
 
             case "popular":
-                $sql = $this->getPopularSQL();
+                $sql = $this->getPopularRoots($limit);
                 break;
 
             case "unpopular":
-                $sql = $this->getUnPopularSQL();
+                $sql = $this->getUnPopularRoots($limit);
                 break;
 
             case "random":
-                $sql = $this->getRandomSQL($iUser);
+                $sql = $this->getRandomRoots($limit, $iUser);
                 break;
 
             case "saved":
-                $sql = $this->getSavedSQL($iUser);
+                $sql = $this->getSavedRoots($iUser);
                 break;
 
             case "deleted":
-                $sql = $this->getDeletedSQL($iUser);
+                $sql = $this->getDeletedRoots($iUser);
                 break;
+            
+            case "default":
+                $sql = $this->getRandomRoots(100);
         }
+        
         return $this->execute($sql);
     }
     
-    public function getImageQueue($aFileHashes, $iUser = null){
-        
-        // set defaults...dont really like $strStatusSQL...
-        $strJoinSQL = '';
-        $strStatusSQL = '0 AS status';
-        if(isset($iUser)){
-            $strJoinSQL = 
-<<<EOD
-        LEFT JOIN img_status
-        ON images.id = img_status.img_id
-        AND img_status.user = $iUser                  
-EOD;
-
-            $strStatusSQL = 
-<<<EOD
-        IFNULL(status, 0) AS status                 
-EOD;
+    public function getImageQueue($sort, $limit, $iUser = -1)
+    {
+        if($iUser == null)
+        {
+            $iUser = -1;
         }
         
-        $sqlIn = $this->generateIn('root', $aFileHashes);
-        $sql =
+        $roots = $this->getRoots($sort, $limit, $iUser);
+        $rootList = $this->generateIn("root", $roots);
+        $sql = 
 <<<EOD
-        SELECT id, path, width, height, root, $strStatusSQL
-        FROM images
-        $strJoinSQL
-        WHERE root in
-        {$sqlIn}
-        ORDER BY root, width DESC, height DESC;
+            SELECT 
+                    root, 
+                    path, 
+                    width, 
+                    height, 
+                    imgur_url, 
+                    IFNULL(status, 0) as status
+            FROM images
+            LEFT JOIN img_status 
+                ON id = img_id 
+                AND user = $iUser
+            WHERE root IN $rootList;
 EOD;
-        return $this->execute($sql);
+        $aOut = $this->execute($sql);
+        return isset($aOut) ? $aOut : array();
     }
     
     public function setImageStatus($iUser, $strRoot, $iImgId, $iStatus){

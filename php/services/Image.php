@@ -43,6 +43,12 @@ class Image extends Service
         $aImages = $oImageTable->getImage($this->m_aInput["id"]);
         if(isset($aImages[0]["root"]))
         {
+            // Sort every image according to their width
+            usort($aImages, function($a, $b)
+            {
+                return strcmp($a["width"], $b["width"]);
+            });
+            
             $this->m_mData = array($aImages[0]["root"] => $aImages);
         }
         return true;

@@ -16,11 +16,10 @@
             <!--Save and Remove options, without tooltips-->
             <li ng-show="user.loggedIn" style="cursor: pointer;">
                 <div style="color:#777;">
-                    <button ng-show="true" class="btn" type="button" ng-click="">
+                    <button ng-show="!saved" class="btn" type="button" ng-click="">
                         Save
                     </button>
-                    <button ng-show="false" class="btn" type="button" ng-click=""
-                             style="cursor: default;">
+                    <button ng-show="saved" class="btn mute" type="button" ng-click="">
                         Saved
                     </button>
                 </div>
@@ -28,11 +27,10 @@
 
             <li ng-show="user.loggedIn" style="cursor: pointer;">
                 <div style="color:#777;">
-                    <button ng-show="current.status == 0" class="btn" type="button" ng-click="">
+                    <button ng-show="!deleted" class="btn" type="button" ng-click="">
                         Remove
                     </button>
-                    <button ng-show="current.status == 1" class="btn" type="button" ng-click=""
-                             style="cursor: default;">
+                    <button ng-show="deleted" class="btn mute" type="button" ng-click="">
                         Removed
                     </button>
                 </div>
@@ -41,9 +39,8 @@
             <!-- Saved and Remove options, with tooltips -->
             <li ng-show="!user.loggedIn" data-toggle="tooltip" data-placement="bottom"
                 title="Login in to save images">
-                <div style="color:#777;">
-                    <button class="btn" type="button" ng-click=""
-                            style="cursor: default; color:#777;">
+                <div>
+                    <button class="btn mute" type="button" ng-click="">
                     Save
                     </button>
                 </div>
@@ -51,9 +48,8 @@
             
             <li ng-show="!user.loggedIn" data-toggle="tooltip" data-placement="bottom"
                 title="Login in to remove images from queue">
-                <div style="color:#777;">
-                    <button class="btn" type="button" ng-click=""
-                            style="cursor: default; color:#777;">
+                <div>
+                    <button class="btn mute" type="button" ng-click="">
                     Remove
                     </button>
                 </div>
