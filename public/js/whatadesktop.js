@@ -1,10 +1,11 @@
 define([
     '../lib/js-common/user/user',
     'carousel',
-    'navigation'
+    'navigation',
+    'tileview'
 ],
 
-  function(user, carousel, nav){
+  function(user, carousel, nav, tileview){
       
     // Create the base module for the page
     var wad = angular.module('whatadesktop', ['ngRoute', 'ui.bootstrap']);
@@ -14,8 +15,8 @@ define([
     user.init(wad);
     carousel.init(wad);
     nav.init(wad);
+    tileview.init(wad);
     
-
     wad.config(function($routeProvider, $locationProvider) {
         $routeProvider
                   
@@ -27,6 +28,11 @@ define([
             .when('/queue/:sort', {
                     templateUrl: 'html/whatadesktop.html',
                     controller: 'QueueCtrl'
+            })
+            
+            .when('/saved', {
+                    templateUrl: 'html/whatadesktop.html',
+                    controller: 'SavedCtrl'
             })
 
             .otherwise({

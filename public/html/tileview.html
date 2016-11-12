@@ -1,0 +1,15 @@
+<div class = "container tile-view" style="width: {{ numTileCols * tileWidth }}px">
+    <div class="row" ng-repeat="row in rows">
+        <div class="col-md-{{colSize}}" ng-repeat="img in row" >
+            <img class="tile" src="{{img.path}}" 
+                style="width: {{img.tileWidth}}px; 
+                height: {{img.tileHeight}}px;
+                margin-top: {{5 + (tileHeight - img.tileHeight) / 2}}px;
+                margin-bottom: {{(tileHeight - img.tileHeight) / 2}}px;
+                margin-left: {{5 + (tileWidth - img.tileWidth) / 2}}px;
+                margin-right: {{5 + (tileWidth - img.tileWidth) / 2}}px;
+                cursor: pointer;" 
+                />
+        </div>
+    </div>     
+</div>

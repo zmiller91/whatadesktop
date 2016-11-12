@@ -42,7 +42,7 @@ define([
                 $scope.windowWidth = winDim.w;
                 $scope.windowHeight = winDim.h;
             }
-        }
+        };
         
         // Enable hotkeys so a user can navigate the carousel without using a
         // mouse.  Allow the user to scroll left and right as well as save or
@@ -123,6 +123,13 @@ define([
         {
             $this.get('/api/image', {id: image}, success, error);
         };
+
+        // GET request to saved
+        this.getSaved =  function(image, success, error) 
+        {
+            $this.get('/api/saved', {}, success, error);
+            $rootScope.$broadcast('carousel:saved', $this.data);
+        };
         
         // Generic GET request. Should only be used for carousel data.
         this.get = function(url, params, success, error)
@@ -144,7 +151,7 @@ define([
             {
                 error(response);
             });
-        }
+        };
         
         // Get the user's list of saved and deleted roots, update the carousel
         // images accordingly
@@ -184,7 +191,7 @@ define([
                     error(response);
                 }
             });
-        }
+        };
         
         // Method for preloading the next and previous images
         this.preload = function()
@@ -194,7 +201,7 @@ define([
             
             for(var k in keys)
             {
-                k = keys[k]
+                k = keys[k];
                 if(!(k in $this._preloadedKeys))
                 {
                     var url = $this.carousel.get(k)[0]["path"];
@@ -232,10 +239,27 @@ define([
     // Resize directive. Will update the carousel view whenever the window
     // resizes
     app.directive('resize', function ($window) {
-        return function (scope, element) 
+        return function (scope) 
         {
             scope.$watch(getWindowSize, scope.update, true);
-            angular.element($window).bind('resize', scope.$apply);
+            angular.element($window).bind('resize', 
+                function()
+                {
+                    if(scope.current !== null)
+                    {
+                        var winDims = getWindowSize();
+                        var clamped = clamp(scope.current, scope.current.width,
+                            scope.current.height, winDims.w, winDims.h);
+
+                        scope.width = clamped.width;
+                        scope.height = clamped.height;
+                        scope.windowWidth = winDims.w;
+                        scope.windowHeight = winDims.h;
+
+                        scope.$digest();
+                    }
+                }
+            );
         };
     });
 }};});

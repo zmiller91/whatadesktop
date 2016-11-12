@@ -92,7 +92,7 @@
                         <ul class="dropdown-menu" style="cursor: pointer;">
                             <li><a ng-show="!user.loggedIn" ng-click="register()">Register</a></li>
                             <li><a ng-show="!user.loggedIn"  ng-click="login()">Login</a></li>
-                            <li><a ng-show="user.loggedIn"  ng-click="">Saved</a></li>
+                            <li><a ng-show="user.loggedIn"  ng-click="goto('/saved')">Saved</a></li>
                             <li><a ng-show="user.loggedIn"  ng-click="">Removed</a></li>
                             <li><a ng-show="user.loggedIn"  ng-click="logout()">Log Out</a></li>
                             
