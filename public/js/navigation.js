@@ -12,6 +12,8 @@ define([
         $scope.current = $scope.carousel.current();
         $scope.saved = false;
         $scope.deleted = false;
+        $scope.tileView = $location.path() === "/saved" || 
+                $location.path === "/removed";
 
         $scope.goto = function(path)
         {
@@ -67,9 +69,5 @@ define([
                 }
             }
         );
-
-
-        
     });
-    
 }};});
