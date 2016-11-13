@@ -1,3 +1,5 @@
+www.whatadesktop.com
+
 After install:
 
 1. Create a `log` directory at the top of the working tree
