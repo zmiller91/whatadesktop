@@ -38,7 +38,8 @@ class ImageTable extends BaseTable{
             WHERE root NOT IN (
                     SELECT DISTINCT img_root
                     FROM img_status
-                    WHERE status = -1
+                    WHERE (status = -1
+                    or status = 1)
                     AND user = $iUser
             )
             ORDER BY id DESC
@@ -55,7 +56,8 @@ EOD;
             WHERE root NOT IN (
                     SELECT DISTINCT img_root
                     FROM img_status
-                    WHERE status = -1
+                    WHERE (status = -1
+                    OR status = 1)
                     AND user = $iUser
             )
             ORDER BY RAND()
@@ -70,6 +72,7 @@ EOD;
             SELECT img_root as root
             FROM img_status
             GROUP BY img_root
+            HAVING SUM(status) > 0
             ORDER BY SUM(status) DESC
             limit $limit;
 EOD;
@@ -82,6 +85,7 @@ EOD;
             SELECT img_root
             FROM img_status
             GROUP BY img_root
+            HAVING SUM(status) < 0
             ORDER BY SUM(status) ASC
             LIMIT $limit;
 EOD;
@@ -137,10 +141,18 @@ EOD;
                 break;
             
             case "default":
-                $sql = $this->getRandomRoots(100);
+                $sql = $this->getRandomRoots($limit);
         }
         
-        return $this->execute($sql);
+        $roots = $this->execute($sql);
+        if(!in_array($strSortMethod, array("saved", "deleted"))
+                && sizeof($roots) < $limit)
+        {
+            $more = $this->execute($this->getRandomRoots($limit - sizeof($roots), $iUser));
+            $roots = array_merge($roots, $more);
+        }
+        
+        return $roots;
     }
     
     public function getImageQueue($sort, $limit, $iUser = -1)
@@ -176,29 +188,6 @@ EOD;
 EOD;
         $aOut = $this->execute($sql);
         return isset($aOut) ? $aOut : array();
-    }
-    
-    public function setImageStatus($iUser, $strRoot, $iImgId, $iStatus){
-        return $this->execute(
-<<<EOD
-        INSERT INTO img_status
-        (user, img_root, img_id, status, updated_date)
-        VALUES ($iUser, '$strRoot',$iImgId, $iStatus, NOW())
-        ON DUPLICATE KEY UPDATE
-        status = $iStatus,
-        updated_date = NOW();
-EOD
-        );
-    }
-    
-    public function removeImageStatus($iUser, $strRoot){
-        return $this->execute(
-<<<EOD
-        DELETE FROM img_status
-        WHERE user = $iUser
-        AND img_root = "$strRoot";
-EOD
-        );
     }
     
     public function getImage($root){

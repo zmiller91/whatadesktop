@@ -24,6 +24,16 @@ define([
                 $route.reload();
             }
         }
+        
+        $scope.setStatus = function(status)
+        {
+            var root = CarouselData.carousel.currentKey();
+            CarouselData.setImageStatus(root, status);
+            if(status === "deleted")
+            {
+                CarouselData.carousel.deleteKey(root);
+            }
+        }
 
         $scope.$on('user:updated', function(event, data) {
             $scope.user = User;

@@ -64,11 +64,12 @@ define([
             {
                 case 38: // Up Arrow
                 case 87: // W
-                    //TODO: 
+                    CarouselData.setImageStatus($scope.carousel.currentKey(), "saved"); 
                     break;
 
                 case 40: // Down Array
                 case 83:// S
+                    CarouselData.setImageStatus($scope.carousel.currentKey(), "deleted");
                     $scope.carousel.deleteCurrent();
                     break;
 
@@ -156,6 +157,37 @@ define([
                 if(error){error(response);};
             });
         };
+        
+        this.setImageStatus = function(root, status, success, error)
+        {
+            $http.put("/api/imagestatus", {root: root, status: status})
+            .then(function(response) 
+            {
+                // Iterate over every saved or deleted root
+                var root = response.data.root;
+                if($this.carousel.contains(root))
+                {
+                    var images = $this.carousel.get(root);
+                    var status = response.data.status;
+                    var status = status === "saved" ? "1" :
+                            status === "deleted" ? "-1" : "0";
+                    
+                    for(var i in images)
+                    {
+                        images[i]["status"] = status;
+                    }
+                    
+                    $this.carousel.add(root, images);
+                }
+                
+                var data = response.data;
+                if(success){success($this.data);}
+            }, 
+            function(response) 
+            {
+                if(error){error(response);}
+            });
+        }
         
         // Get the user's list of saved and deleted roots, update the carousel
         // images accordingly

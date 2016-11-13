@@ -12,13 +12,22 @@
         <!--Site Pages-->
         <ul ng-show="display" class="nav navbar-nav navbar-right">
             
-            <!--Save and Remove options, without tooltips-->
+            <!-- Reset, Save, and Remove options without tooltips -->
             <li ng-show="user.loggedIn && !tileView" style="cursor: pointer;">
                 <div style="color:#777;">
-                    <button ng-show="!saved" class="btn" type="button" ng-click="">
+                    <button ng-show="saved || deleted" class="btn" type="button" 
+                            ng-click="setStatus('reset')">
+                        Requeue
+                    </button>
+                </div>
+            </li>
+            
+            <li ng-show="user.loggedIn && !tileView" style="cursor: pointer;">
+                <div style="color:#777;">
+                    <button ng-show="!saved" class="btn" type="button" ng-click="setStatus('saved')">
                         Save
                     </button>
-                    <button ng-show="saved" class="btn mute" type="button" ng-click="">
+                    <button ng-show="saved" class="btn mute" type="button" ng-click="setStatus('reset')">
                         Saved
                     </button>
                 </div>
@@ -26,10 +35,10 @@
 
             <li ng-show="user.loggedIn && !tileView" style="cursor: pointer;">
                 <div style="color:#777;">
-                    <button ng-show="!deleted" class="btn" type="button" ng-click="">
+                    <button ng-show="!deleted" class="btn" type="button" ng-click="setStatus('deleted')">
                         Remove
                     </button>
-                    <button ng-show="deleted" class="btn mute" type="button" ng-click="">
+                    <button ng-show="deleted" class="btn mute" type="button" ng-click="setStatus('reset'">
                         Removed
                     </button>
                 </div>
