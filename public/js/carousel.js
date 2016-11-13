@@ -6,8 +6,8 @@ define([
     // Controller for the image/:id route
     app.controller("ImageCtrl", function(CarouselData, $routeParams)
     {
-        CarouselData.carousel.reset();
-        CarouselData.getImage($routeParams.id, function(){}, function(){}); 
+            CarouselData.carousel.reset();
+            CarouselData.getImage($routeParams.id, function(){}, function(){}); 
     });
 
     // Controller for the queue/:sort route
@@ -16,10 +16,21 @@ define([
         CarouselData.carousel.reset();
         CarouselData.getQueue($routeParams.sort, function(){}, function(){});        
     });
-
+    
     // Main carousel controller
-    app.controller("CarouselCtrl", function (User, CarouselData, $scope, $route) 
+    app.controller("CarouselCtrl", function (CarouselData, $scope, $route) 
     {
+        // Mark the view as visible if the current path is in the list below
+        var currentPath = $route.current.$$route.originalPath;
+        var showOnPaths = [
+            "/queue/:sort",
+            "/image/:id",
+            "/expand/:view",
+            "/expand/:view/:id"
+        ];
+        
+        $scope.visible  = showOnPaths.indexOf(currentPath) > -1;
+        
         var winDim = getWindowSize();
         $scope.windowWidth = winDim.w;
         $scope.windowHeight = winDim.h;
@@ -123,13 +134,6 @@ define([
         {
             $this.get('/api/image', {id: image}, success, error);
         };
-
-        // GET request to saved
-        this.getSaved =  function(image, success, error) 
-        {
-            $this.get('/api/saved', {}, success, error);
-            $rootScope.$broadcast('carousel:saved', $this.data);
-        };
         
         // Generic GET request. Should only be used for carousel data.
         this.get = function(url, params, success, error)
@@ -145,11 +149,11 @@ define([
                 }
                 
                 $this.preload();
-                success($this.data);
+                if(success){success($this.data);};
             }, 
             function(response) 
             {
-                error(response);
+                if(error){error(response);};
             });
         };
         

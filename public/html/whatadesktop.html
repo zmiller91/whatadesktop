@@ -93,7 +93,7 @@
                             <li><a ng-show="!user.loggedIn" ng-click="register()">Register</a></li>
                             <li><a ng-show="!user.loggedIn"  ng-click="login()">Login</a></li>
                             <li><a ng-show="user.loggedIn"  ng-click="goto('/saved')">Saved</a></li>
-                            <li><a ng-show="user.loggedIn"  ng-click="">Removed</a></li>
+                            <li><a ng-show="user.loggedIn"  ng-click="goto('/removed')">Removed</a></li>
                             <li><a ng-show="user.loggedIn"  ng-click="logout()">Log Out</a></li>
                             
                             <!-- Saved and Deleted options, with tooltips -->
@@ -127,5 +127,8 @@
 </nav>
 
 
-<div id="carousel" ng-controller="CarouselCtrl" carousel resize  ng-keydown="keypress($event)"  tabindex="0"></div>
+<div id="carousel" ng-controller="CarouselCtrl"  ng-show="visible" carousel resize  
+     ng-keydown="keypress($event)"  tabindex="0"></div>
+
+<div id="tiles" ng-controller="TileCtrl" tile-view ng-show="visible"></div>
 

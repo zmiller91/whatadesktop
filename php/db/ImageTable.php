@@ -132,7 +132,7 @@ EOD;
                 $sql = $this->getSavedRoots($iUser);
                 break;
 
-            case "deleted":
+            case "removed":
                 $sql = $this->getDeletedRoots($iUser);
                 break;
             
@@ -152,7 +152,7 @@ EOD;
         
         $roots = $this->getRoots($sort, $limit, $iUser);
         $rootList = $this->generateIn("root", $roots);
-        $bRandomize = $sort != "saved" && $sort != "deleted";
+        $bRandomize = $sort != "saved" && $sort != "removed";
         $strRandomSql = !$bRandomize ? "" :
 <<<EOD
             ORDER BY RAND()

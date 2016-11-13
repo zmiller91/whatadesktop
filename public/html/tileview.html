@@ -1,15 +1,17 @@
-<div class = "container tile-view" style="width: {{ numTileCols * tileWidth }}px">
-    <div class="row" ng-repeat="row in rows">
-        <div class="col-md-{{colSize}}" ng-repeat="img in row" >
-            <img class="tile" src="{{img.path}}" 
-                style="width: {{img.tileWidth}}px; 
-                height: {{img.tileHeight}}px;
-                margin-top: {{5 + (tileHeight - img.tileHeight) / 2}}px;
-                margin-bottom: {{(tileHeight - img.tileHeight) / 2}}px;
-                margin-left: {{5 + (tileWidth - img.tileWidth) / 2}}px;
-                margin-right: {{5 + (tileWidth - img.tileWidth) / 2}}px;
-                cursor: pointer;" 
-                />
+<div class = "container tile-view" style="width: {{ numCols * colWidth }}px">
+    <div class="row" ng-repeat="row in grid track by $index" style="margin-right: 17px">
+        <div class="col-md-{{bsColSize}}" ng-repeat="img in row.images" 
+             style="
+                padding-left: {{ (row.colWidth - img.width)/2 }}px;
+                padding-top: {{ (row.colHeight - img.height)/2 }}px;
+             ">
+            <img ng-click="enlarge(img)" class="tile" src="{{img.path}}" 
+                style="
+                    width: {{img.width}}px; 
+                    height: {{img.height}}px;
+                    cursor: pointer;
+                " 
+            />
         </div>
     </div>     
 </div>

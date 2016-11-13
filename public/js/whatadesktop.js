@@ -13,9 +13,9 @@ define([
     // Init the controllers, directives, and services for all the components
     // on the page
     user.init(wad);
+    tileview.init(wad);
     carousel.init(wad);
     nav.init(wad);
-    tileview.init(wad);
     
     wad.config(function($routeProvider, $locationProvider) {
         $routeProvider
@@ -33,6 +33,21 @@ define([
             .when('/saved', {
                     templateUrl: 'html/whatadesktop.html',
                     controller: 'SavedCtrl'
+            })
+            
+            .when('/removed', {
+                    templateUrl: 'html/whatadesktop.html',
+                    controller: 'RemovedCtrl'
+            })
+            
+            .when('/expand/:view', {
+                    templateUrl: 'html/whatadesktop.html',
+                    controller: 'ExpandCtrl'
+            })
+            
+            .when('/expand/:view/:id', {
+                    templateUrl: 'html/whatadesktop.html',
+                    controller: 'ExpandImgCtrl'
             })
 
             .otherwise({

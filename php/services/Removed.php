@@ -2,7 +2,7 @@
 
 require_once "functions/utilities.php";
 
-class Saved extends Service
+class Removed extends Service
 {
     protected function allowableMethods() 
     {
@@ -30,7 +30,7 @@ class Saved extends Service
     protected function get()
     {
         $oImageTable = new ImageTable($this->m_oConnection);
-        $aImages = $oImageTable->getImageQueue("saved", null, $this->m_oUser->m_iUserId);
+        $aImages = $oImageTable->getImageQueue("removed", null, $this->m_oUser->m_iUserId);
         if($oImageTable->m_oError->hasError())
         {
             $this->m_oError->addAll($oImageTable->m_oError->get());
