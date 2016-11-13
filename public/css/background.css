@@ -62,8 +62,44 @@ body {
     background: #202020;
 }
 
-.dropdown-menu{
-    
+.wad-a:before {
+    font-family: Arial; /* your font family here! */
+    font-weight: bold;
+    content: "A";
+}
+
+.wad-s:before {
+    font-family: Arial; /* your font family here! */
+    font-weight: bold;
+    content: 'S';
+}
+
+.wad-d:before {
+    font-family: Arial; /* your font family here! */
+    font-weight: bold;
+    content: 'D';
+}
+
+.wad-w:before {
+    font-family: Arial; /* your font family here! */
+    font-weight: bold;
+    content: 'W';
+}
+
+.wad-r:before {
+    font-family: Arial; /* your font family here! */
+    font-weight: bold;
+    content: 'R';
+}
+
+.wad-c:before {
+    font-family: Arial; /* your font family here! */
+    font-weight: bold;
+    content: 'C';
+}
+
+.wad-btn:focus {
+    outline: none;
 }
 
 #mainNav

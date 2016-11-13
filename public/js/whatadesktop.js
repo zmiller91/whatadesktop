@@ -2,13 +2,14 @@ define([
     '../lib/js-common/user/user',
     'carousel',
     'navigation',
-    'tileview'
+    'tileview',
+    'notifications'
 ],
 
-  function(user, carousel, nav, tileview){
+  function(user, carousel, nav, tileview, notifications){
       
     // Create the base module for the page
-    var wad = angular.module('whatadesktop', ['ngRoute', 'ui.bootstrap']);
+    var wad = angular.module('whatadesktop', ['ngRoute', 'ui.bootstrap', 'ngCookies']);
     
     // Init the controllers, directives, and services for all the components
     // on the page
@@ -16,6 +17,7 @@ define([
     tileview.init(wad);
     carousel.init(wad);
     nav.init(wad);
+    notifications.init(wad);
     
     wad.config(function($routeProvider, $locationProvider) {
         $routeProvider
