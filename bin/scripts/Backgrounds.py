@@ -173,16 +173,18 @@ for page in range(0, pages):
             strAfter = mSuccess
             oDB.commit()
             print 'Passed on try ' + str(t + 1)
+            sleep = 30
             break
         elif mSuccess == False:
             print 'Failed on try ' + str(t + 1)
             oDB.rollback()
-            time.sleep(sleep)
+            sleep = sleep + 10
         else:
             oDB.rollback
             "Response '" + str(mSuccess) + "' invalid. Skipping."
             break
+
+        time.sleep(sleep)
     print '----------------------------------------------------------------------------------------------------------'
-    time.sleep(sleep)
 
 
