@@ -1,3 +1,8 @@
+After install:
+
+1. Create a `log` directory at the top of the working tree
+2. Allow apache to write to the `cache` directory
+
 Submodules:
 
 * https://github.com/zmiller91/php-common
