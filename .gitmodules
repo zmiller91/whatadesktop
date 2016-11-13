@@ -3,7 +3,7 @@
 	url = https://github.com/requirejs/requirejs.git
 [submodule "php/common"]
 	path = php/common
-	url = https://github.com/zmiller91/php-common
+	url = https://www.github.com/zmiller91/php-common
 [submodule "public/lib/js-common"]
 	path = public/lib/js-common
 	url = https://github.com/zmiller91/js-common
