@@ -11,6 +11,7 @@ create table images(
     imgur_url varchar(256),
     deleted tinyint default 0,
     saved tinyint default 0,
+    created_date timestamp,
     
     primary key (id),
     index (root),
