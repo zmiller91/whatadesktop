@@ -17,7 +17,7 @@ def insert(oImage):
 
     sql = ("""
         INSERT IGNORE INTO images
-        (filehash, path, root, width, height, imgur_url, filename, timestamp)
+        (filehash, path, root, width, height, imgur_url, filename, created_date)
         VALUES
         (MD5('{6}'), '{1}', '{2}', {3}, {4}, '{5}', '{6}', NOW());
     """).format(oImage['filename'], oImage['url'], oImage['root'], oImage['width'], oImage['height'], oImage['imgur_url'], oImage['filename'])
