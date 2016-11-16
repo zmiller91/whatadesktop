@@ -58,6 +58,7 @@
 
 /* carousel */
 
+
 body {
     background: #202020;
 }
@@ -99,6 +100,10 @@ body {
 }
 
 .wad-btn:focus {
+    outline: none;
+}
+
+#carousel:focus {
     outline: none;
 }
 
