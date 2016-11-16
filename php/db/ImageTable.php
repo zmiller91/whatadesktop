@@ -163,6 +163,11 @@ EOD;
         }
         
         $roots = $this->getRoots($sort, $limit, $iUser);
+        if(empty($roots))
+        {
+            return array();
+        }
+        
         $rootList = $this->generateIn("root", $roots);
         $bRandomize = $sort != "saved" && $sort != "removed";
         $strRandomSql = !$bRandomize ? "" :
