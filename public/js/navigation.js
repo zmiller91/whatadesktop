@@ -23,7 +23,7 @@ define([
             {
                 $route.reload();
             }
-        }
+        };
         
         $scope.setStatus = function(status)
         {
@@ -33,7 +33,16 @@ define([
             {
                 CarouselData.carousel.deleteKey(root);
             }
-        }
+        };
+        
+        $scope.download = function(index)
+        {
+            var a = document.createElement('a');
+            a.href = $scope.current[index].path;
+            a.download = $scope.current[index].root;
+            a.target = "_blank";
+            a.click();
+        };
 
         $scope.$on('user:updated', function(event, data) {
             $scope.user = User;
@@ -41,6 +50,10 @@ define([
         
         $scope.$on('user:loggedout', function(event, data) {
             $scope.goto("/queue/random");
+        });
+
+        $scope.$on('download', function(event, data) {
+            $scope.download(0);
         });
         
         $scope.$watch(
@@ -53,7 +66,17 @@ define([
                 $scope.display = $scope.user.authorizationFinished;
             }
         );
-        
+
+        $scope.$watch(
+            function($scope)
+            {
+                return $scope.carousel.currentKey();
+            },
+            function()
+            {
+                $scope.current = $scope.carousel.current();
+            }
+        );
         
         $scope.$watch(
             function($scope)
