@@ -2,17 +2,12 @@ import urllib
 import urllib2
 import json
 import MySQLdb
-import os
-import os.path
 import re
 import time
+from os import path, mkdir
 from datetime import datetime
 
-strRoot = os.getcwd()
-
-
-
-#Insert an image into the database
+# Insert an image into the database
 def insert(oImage):
 
     sql = ("""
@@ -21,30 +16,24 @@ def insert(oImage):
         VALUES
         (MD5('{6}'), '{1}', '{2}', {3}, {4}, '{5}', '{6}');
     """).format(oImage['filename'], oImage['url'], oImage['root'], oImage['width'], oImage['height'], oImage['imgur_url'], oImage['filename'])
-
     oDBExec.execute(sql)
 
-def getFilePath(oImage):
-    strPath = strRoot
-    strPath += "/" + oImage["root"]
-    return
-
-#creates directories and saves file
+# creates directories and saves file
 def save(oImage):
 
-    #create root image directory
+    # create root image directory
     strPath = "\\images\\" + oImage["root"]
     if not os.path.isdir(strRoot + strPath):
         os.mkdir(strRoot + strPath)
 
-    #create dimension directory, if it's not created
-    strDim = str(oImage['width']) + "x" + str(oImage['height'])
+    # create dimension directory, if it's not created
+    strDim = "%sx%s" (str(oImage['width']), + str(oImage['height']))
     strPath += "\\" + strDim
     if not os.path.isdir(strRoot + strPath):
         os.mkdir(strRoot + strPath)
         strPath += "\\" + oImage['root']
 
-        #download file if it doesnt already exist
+        # download file if it doesnt already exist
         if not os.path.isdir(strRoot + strPath):
             try:
                 url = oImage['url'].replace("amp;", "")
@@ -57,46 +46,37 @@ def save(oImage):
                         type = type.replace('\r\n', '');
                         type = type.split('/')[1];
 
-                # Open our local file for writing
+                #  Open our local file for writing
                 strPath += '.' + type
                 with open(strRoot + strPath, "wb") as local_file:
                     local_file.write(f.read())
 
-                #all went well
+                # all went well
                 oImage['type'] = "." + type
                 oImage['filepath'] = urllib.quote_plus(strPath)
                 return oImage
 
-            #handle errors
-            except urllib2.HTTPError, e:
-                print "HTTP Error:", e.code, url
-            except urllib2.URLError, e:
-                print "URL Error:", e.reason, url
-
+            # handle errors
+            except (urllib2.HTTPError, urllib2.URLError) as e:
+                print "HTTP Error: %s, url: %s"  % (e.code, url)
     return False
-
 
 def store(oImage):
     if oImage['root']:
-       # oImage = save(oImage)
+        # oImage = save(oImage)
         oImage['filename'] = oImage['root'] + 'x' + str(oImage['width']) + 'x' + str(oImage['height']) + '.jpeg'
         insert(oImage)
 
-#get data from reddit
+# get data from reddit
 def getData(time, count, after):
-    after = ('&after=' + after) if after else ''
-    url = "http://www.reddit.com/r/wallpapers/.json?sort=top&t=" + time + "&limit=" + str(count) + after
+    after = ('&after=%s' % after) if after else ''
+    url = "http://www.reddit.com/r/wallpapers/.json?sort=top&t=%s&limit=%s%s" % (time, str(count), after)
     print 'URL: ' + url
     try:
         strResponse = urllib2.urlopen(url).read()
-    except urllib2.HTTPError, e:
+    except (urllib2.HTTPError, urllib2.URLError) as e:
         print "HTTP Error:", e.code, e.reason
         return False
-    except urllib2.URLError, e:
-        print "URL Error:", e.code, e.reason
-        return False
-
-
     return json.loads(strResponse)
 
 def stripImgurUrl(url):
@@ -114,7 +94,7 @@ def getImages(time, count, after):
     strCurrentPost = ''
     for oPost in aPosts:
 
-        #get the data
+        # get the data
         oData = oPost['data'];
 
         strID = oData['id']
@@ -124,7 +104,7 @@ def getImages(time, count, after):
         if 'imgur.com' in strDomain and 'preview' in oPost['data']:
 
 
-            #get all the image resolutions
+            # get all the image resolutions
             strName = oData['name']
             aImageSource = [oPost['data']['preview']['images'][0]['source']]
             aImageVariants = oPost['data']['preview']['images'][0]['resolutions']
@@ -137,7 +117,7 @@ def getImages(time, count, after):
                 oImage['root'] = root
                 oImage['name'] = strName
                 oImage['url'] = oImage['url'].replace('amp;', '');
-                #store the image
+                # store the image
                 store(oImage)
 
             strCurrentPost = strName
@@ -148,7 +128,7 @@ strSort = 'top'
 period = 'all'
 pages = 10
 
-#database connection
+# database connection
 oDB = MySQLdb.connect(
     host="localhost",
     user="ima_user",
@@ -161,10 +141,9 @@ sleep = 30
 tries = 10
 strAfter = ''
 for page in range(0, pages):
-    print ''
-    print '----------------------------------------------------------------------------------------------------------'
-    print 'Time: ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    print 'Page: ' + str(page + 1)
+    print '\n----------------------------------------------------------------------------------------------------------'
+    print 'Time: %s' % datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print 'Page: %s' % str(page + 1)
 
     for t in range(0, tries):
 
@@ -172,15 +151,15 @@ for page in range(0, pages):
         if mSuccess:
             strAfter = mSuccess
             oDB.commit()
-            print 'Passed on try ' + str(t + 1)
+            print 'Passed on try %s' % str(t + 1)
             break
         elif mSuccess == False:
-            print 'Failed on try ' + str(t + 1)
+            print 'Failed on try %s' % str(t + 1)
             oDB.rollback()
             time.sleep(sleep)
         else:
             oDB.rollback
-            "Response '" + str(mSuccess) + "' invalid. Skipping."
+            "Response '%s' invalid. Skipping." % str(mSuccess)
             break
     print '----------------------------------------------------------------------------------------------------------'
     time.sleep(sleep)
