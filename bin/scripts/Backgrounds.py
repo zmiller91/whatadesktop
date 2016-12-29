@@ -27,7 +27,7 @@ def save(oImage):
         os.mkdir(strRoot + strPath)
 
     # create dimension directory, if it's not created
-    strDim = "%sx%s" (str(oImage['width']), + str(oImage['height']))
+    strDim = "{}x{}".format((str(oImage['width']), + str(oImage['height'])))
     strPath += "\\" + strDim
     if not os.path.isdir(strRoot + strPath):
         os.mkdir(strRoot + strPath)
@@ -58,7 +58,7 @@ def save(oImage):
 
             # handle errors
             except (urllib2.HTTPError, urllib2.URLError) as e:
-                print "HTTP Error: %s, url: %s"  % (e.code, url)
+                print "HTTP Error: {}, url: {}".format(e.code, url)
     return False
 
 def store(oImage):
@@ -70,7 +70,7 @@ def store(oImage):
 # get data from reddit
 def getData(time, count, after):
     after = ('&after=%s' % after) if after else ''
-    url = "http://www.reddit.com/r/wallpapers/.json?sort=top&t=%s&limit=%s%s" % (time, str(count), after)
+    url = "http://www.reddit.com/r/wallpapers/.json?sort=top&t={}&limit={}{}".format(time, str(count), after)
     print 'URL: ' + url
     try:
         strResponse = urllib2.urlopen(url).read()
@@ -142,8 +142,8 @@ tries = 10
 strAfter = ''
 for page in range(0, pages):
     print '\n----------------------------------------------------------------------------------------------------------'
-    print 'Time: %s' % datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    print 'Page: %s' % str(page + 1)
+    print 'Time: {}'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    print 'Page: {}'.format(str(page + 1))
 
     for t in range(0, tries):
 
@@ -151,15 +151,15 @@ for page in range(0, pages):
         if mSuccess:
             strAfter = mSuccess
             oDB.commit()
-            print 'Passed on try %s' % str(t + 1)
+            print 'Passed on try {}'.format(str(t + 1))
             break
         elif mSuccess == False:
-            print 'Failed on try %s' % str(t + 1)
+            print 'Failed on try {}'.format(str(t + 1))
             oDB.rollback()
             time.sleep(sleep)
         else:
             oDB.rollback
-            "Response '%s' invalid. Skipping." % str(mSuccess)
+            "Response '{}' invalid. Skipping.".format(str(mSuccess))
             break
     print '----------------------------------------------------------------------------------------------------------'
     time.sleep(sleep)
