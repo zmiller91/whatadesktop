@@ -69,7 +69,12 @@
                   <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Download
                   <span class="caret"></span></button>
                   <ul class="dropdown-menu">
-                    <li><a ng-repeat="c in current" href="{{c.path}}" download="" target="_blank">{{c.width}}x{{c.height}}</a></li>
+                    <li>
+                        <a ng-repeat="c in current track by $index" 
+                                ng-click="download($index)" style="cursor: pointer;">
+                            {{c.width}}x{{c.height}}
+                        </a>
+                    </li>
                   </ul>
                 </div>
             </li>

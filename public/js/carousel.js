@@ -18,7 +18,7 @@ define([
     });
     
     // Main carousel controller
-    app.controller("CarouselCtrl", function (CarouselData, $scope, $route) 
+    app.controller("CarouselCtrl", function (CarouselData, $scope, $route, $rootScope) 
     {
         // Mark the view as visible if the current path is in the list below
         var currentPath = $route.current.$$route.originalPath;
@@ -83,8 +83,12 @@ define([
                     $scope.carousel.previous();
                     break;  
                 
-                case 82:
+                case 82: // R
                     $route.reload();
+                    break;
+                    
+                case 67: // C
+                    $rootScope.$broadcast('download', null);
                     break;
             }
         };
