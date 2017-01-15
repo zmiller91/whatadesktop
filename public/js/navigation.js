@@ -10,6 +10,7 @@ define([
         $scope.user = User;
         $scope.carousel = CarouselData.carousel;
         $scope.current = $scope.carousel.current();
+        $scope.currentLink = "";
         $scope.saved = false;
         $scope.deleted = false;
         $scope.tileView = $location.path() === "/saved" || 
@@ -43,6 +44,11 @@ define([
             a.target = "_blank";
             a.click();
         };
+        
+        $scope.copyLink = function() {
+            document.getElementById("image-link").select();
+            document.execCommand("copy");
+        }
 
         $scope.$on('user:updated', function(event, data) {
             $scope.user = User;
@@ -75,6 +81,10 @@ define([
             function()
             {
                 $scope.current = $scope.carousel.current();
+                if($scope.current && $scope.current.length) {
+                    $scope.currentLink = "http://www.whatadesktop.com/image/" + 
+                            $scope.current[0].root;
+                }
             }
         );
         
@@ -94,7 +104,7 @@ define([
                 if($scope.carousel.currentKey())
                 {
                     $scope.current = $scope.carousel.current();
-                    if($scope.current.length > 0)
+                    if($scope.current.length)
                     {
                         $scope.saved = $scope.current[0]["status"] === "1";
                         $scope.deleted = $scope.current[0]["status"] === "-1";

@@ -62,6 +62,27 @@
                     </button>
                 </div>
             </li>
+                        
+            <!--Link-->
+            <li>
+                <div class="dropdown">
+                  <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Link
+                  <span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <div class="input-group" style="padding-left:5px; padding-right:5px;">
+                        <input id="image-link" type="text" class="form-control" 
+                               style="width: 300px;" spellcheck="false"
+                               value="{{ currentLink }}">
+                        <span class="input-group-addon" ng-click="copyLink()"
+                              style="cursor: pointer;">
+                            <i class="fa fa-files-o" aria-hidden="true"></i>
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+            </li>
             
             <!--Download-->
             <li ng-show="!tileView">
