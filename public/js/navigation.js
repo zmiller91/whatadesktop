@@ -39,6 +39,8 @@ define([
         $scope.download = function(index)
         {
             var a = document.createElement('a');
+            document.body.appendChild(a);
+            a.setAttribute("type", "hidden");
             a.href = $scope.current[index].path;
             a.download = $scope.current[index].root;
             a.target = "_blank";
