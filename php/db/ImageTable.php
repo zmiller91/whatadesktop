@@ -82,7 +82,7 @@ EOD;
     {
         return
 <<<EOD
-            SELECT img_root
+            SELECT img_root as root
             FROM img_status
             GROUP BY img_root
             HAVING SUM(status) < 0
