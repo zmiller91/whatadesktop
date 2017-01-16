@@ -6,10 +6,14 @@ define([
     app.controller("NotificationCtrl", function($cookies, $uibModal, $scope)
     {
         var show = function() {
-            $uibModal.open({
+            $uibModal
+            .open({
                 templateUrl: 'html/notifications.html',
                 controller: 'NotificationModal',
-                size: 'md'
+                size: 'md',
+            })
+            .closed.then(function(){
+                $( "#carousel" ).focus();
             });
         }
         
