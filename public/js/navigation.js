@@ -4,7 +4,7 @@ define([
 ], function(){return{init: function(app) {
     
     // Controller for the image/:id route
-    app.controller("NavCtrl", function(CarouselData, User, $scope, $location, $route)
+    app.controller("NavCtrl", function(CarouselData, User, $scope, $location, $route, $rootScope)
     {
         $scope.display = false;
         $scope.user = User;
@@ -50,6 +50,10 @@ define([
         $scope.copyLink = function() {
             document.getElementById("image-link").select();
             document.execCommand("copy");
+        }
+        
+        $scope.help = function() {
+            $rootScope.$broadcast('nav:help', null);
         }
 
         $scope.$on('user:updated', function(event, data) {
