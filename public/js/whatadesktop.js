@@ -3,10 +3,11 @@ define([
     'carousel',
     'navigation',
     'tileview',
-    'notifications'
+    'notifications',
+    'filter'
 ],
 
-  function(user, carousel, nav, tileview, notifications){
+  function(user, carousel, nav, tileview, notifications, filter){
       
     // Create the base module for the page
     var wad = angular.module('whatadesktop', ['ngRoute', 'ui.bootstrap', 'ngCookies']);
@@ -18,6 +19,7 @@ define([
     carousel.init(wad);
     nav.init(wad);
     notifications.init(wad);
+    filter.init(wad);
     
     wad.config(function($routeProvider, $locationProvider) {
         $routeProvider

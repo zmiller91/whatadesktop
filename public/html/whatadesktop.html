@@ -12,6 +12,16 @@
         <!--Site Pages-->
         <ul ng-show="display" class="nav navbar-nav navbar-right">
             
+            <!--Help-->
+             <li style="cursor: pointer;">
+                <div>
+                    <button class="btn" type="button" 
+                            ng-click="help()">
+                        Help
+                    </button>
+                </div>
+            </li>
+            
             <!-- Reset, Save, and Remove options without tooltips -->
             <li ng-show="user.loggedIn && !tileView" style="cursor: pointer;">
                 <div style="color:#777;">
@@ -62,16 +72,6 @@
                     </button>
                 </div>
             </li>
-            
-            <!--Help-->
-             <li style="cursor: pointer;">
-                <div>
-                    <button class="btn" type="button" 
-                            ng-click="help()">
-                        Help
-                    </button>
-                </div>
-            </li>
                         
             <!--Link-->
             <li>
@@ -109,6 +109,16 @@
                         </a>
                     </li>
                   </ul>
+                </div>
+            </li>
+            
+            <!--Filter-->
+             <li style="cursor: pointer;">
+                <div>
+                    <button class="btn" type="button" 
+                            ng-click="filter()">
+                        Filter ({{filters}})
+                    </button>
                 </div>
             </li>
 
@@ -170,7 +180,8 @@
     </script>
 </nav>
 
-<div id="tiles" ng-controller="NotificationCtrl"></div>
+<div id="notification" ng-controller="NotificationCtrl"></div>
+<div id="filter" ng-controller="FilterCtrl"></div>
 <div id="carousel" ng-controller="CarouselCtrl"  ng-show="visible" carousel resize  
      ng-keydown="keypress($event)"  tabindex="0"></div>
 

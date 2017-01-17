@@ -4,12 +4,13 @@ define([
 ], function(){return{init: function(app) {
     
     // Controller for the image/:id route
-    app.controller("NavCtrl", function(CarouselData, User, $scope, $location, $route, $rootScope)
+    app.controller("NavCtrl", function(FilterData, CarouselData, User, $scope, $location, $route, $rootScope)
     {
         $scope.display = false;
         $scope.user = User;
         $scope.carousel = CarouselData.carousel;
         $scope.current = $scope.carousel.current();
+        $scope.filters = FilterData.count();
         $scope.currentLink = "";
         $scope.saved = false;
         $scope.deleted = false;
@@ -35,6 +36,13 @@ define([
                 CarouselData.carousel.deleteKey(root);
             }
         };
+        
+        $scope.filter = function() {
+           
+            $rootScope.$broadcast('nav:filter', function() {
+                $scope.filters = FilterData.count();
+            });
+        }
         
         $scope.download = function(index)
         {

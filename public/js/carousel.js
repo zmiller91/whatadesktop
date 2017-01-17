@@ -11,10 +11,18 @@ define([
     });
 
     // Controller for the queue/:sort route
-    app.controller("QueueCtrl", function(CarouselData, $routeParams)
+    app.controller("QueueCtrl", function(CarouselData, FilterData, $scope, $routeParams)
     {
-        CarouselData.carousel.reset();
-        CarouselData.getQueue($routeParams.sort, function(){}, function(){});        
+        var get = function(success, failure) {
+            CarouselData.carousel.reset();
+            CarouselData.getQueue($routeParams.sort, FilterData.get(), 
+            success, failure);      
+        }
+        
+        get(function(){}, function(){});
+        $scope.$on('filter:updated', function(event, args){ 
+            get(args.success, args.failure) 
+        });
     });
     
     // Main carousel controller
@@ -129,9 +137,9 @@ define([
         this._preloadedKeys = {};
 
         // GET request to queue/:sort
-        this.getQueue =  function(type, success, error) 
+        this.getQueue =  function(type, filter, success, error) 
         {
-            $this.get('/api/queue', {sort: type}, success, error);
+            $this.get('/api/queue', {sort: type, filter: filter}, success, error);
         };
 
         // GET request to image/:id

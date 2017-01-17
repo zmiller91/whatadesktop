@@ -1,0 +1,83 @@
+<div class="modal-header">
+    <h3 class="modal-title">
+        Filter
+        <i ng-show="loading" class="pull-right fa fa-spinner fa-spin fa-fw"></i>
+    </h3>
+</div>
+
+<div id="filter" class="container-fluid modal-body">
+            
+
+    <!-- Width -->
+    <div class="row">
+        <div class="col-sm-12">
+            <h4><small><strong>WIDTH</strong></small></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">Min.</div>
+        <div class="col-sm-6">Max.</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 input-group">
+            <input type="text" class="form-control" 
+                   id="min-width" ng-model="form.width.min">
+            <span class="input-group-addon">px</span>
+        </div>
+
+        <div class="col-sm-6 input-group">
+            <input type="text" class="form-control" 
+                   id="max-width" ng-model="form.width.max">
+            <span class="input-group-addon">px</span>
+        </div>
+    </div>
+
+    <!-- Height -->
+    <div class="row">
+        <div class="col-sm-12">
+            <h4><small><strong>HEIGHT</strong></small></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">Min.</div>
+        <div class="col-sm-6">Max.</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 input-group">
+            <input type="text" class="form-control" 
+                   id="min-width" ng-model="form.height.min">
+            <span class="input-group-addon">px</span>
+        </div>
+
+        <div class="col-sm-6 input-group">
+            <input type="text" class="form-control" 
+                   id="max-width" ng-model="form.height.max">
+            <span class="input-group-addon">px</span>
+        </div>
+    </div>
+
+    <!-- Aspect Ratio -->
+    <div class="row">
+        <div class="col-sm-12">
+            <h4><small><strong>OTHER</strong></small></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-5">
+                <div class="filter-label">Aspect Ratio: </div>
+        </div>
+        <div class="col-sm-7 input-group">
+            <input type="text" class="form-control" id="arWidth"
+                    ng-model="form.ar.width">
+            <span class="input-group-addon" style="width:1%;">:</span>
+            <input type="text" class="form-control" id="arHeight"
+                    ng-model="form.ar.height">
+        </div>
+
+    </div>
+            
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default wad-btn" ng-click="save()">Save</button>
+    <button type="button" class="btn btn-primary wad-btn" ng-click="done()">Close</button>
+</div>

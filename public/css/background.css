@@ -184,3 +184,15 @@ transition: opacity 2s ease-in; /* vendorless fallback */
   height: 100px
 }
 /* End carousel */
+
+#filter .input-group {
+    float: left;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+.filter-label {
+    height: 29px;
+    padding-top: 7px;
+    margin-bottom: 2px;
+}
