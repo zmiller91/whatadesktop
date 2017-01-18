@@ -27,6 +27,7 @@ define([
     app.controller("FilterModal", function(FilterData, $scope, $uibModalInstance, $rootScope)
     {
         $scope.form = FilterData.get();
+        $scope.errors = [];
         
         $scope.done = function()
         {
@@ -34,8 +35,14 @@ define([
             $uibModalInstance.dismiss('cancel');
         };
         
+        
         $scope.save = function()
         {
+            if(!validate()){
+                return;
+            }
+            
+            
             FilterData.width = $scope.form.width;
             FilterData.height = $scope.form.height;
             FilterData.ar = $scope.form.ar;
@@ -48,6 +55,69 @@ define([
             
             $rootScope.$broadcast('filter:updated', data);
         };
+        
+        var validate = function() {
+            $scope.errors = [];
+            var valid = true;
+            
+            // Aspect ratio must have both fields, or not
+            if(xor($scope.form.ar.width, $scope.form.ar.height)) {
+                $scope.errors.push("Both aspect ratio fields must exist");
+                valid = false;
+            }
+            else if($scope.form.ar.width && $scope.form.ar.height) 
+            {
+                // Aspect ratio fields must be greater than 0
+                if(!(validateNumber($scope.form.ar.width, 0) && 
+                        validateNumber($scope.form.ar.height, 0))) {
+                    $scope.errors.push("Both aspect ratio fields must be numbers greater than 1");
+                    valid = false;
+                }
+            }
+            
+            // All other fields must be greater than or equal to 0
+            if( !(validateMinMax($scope.form.width) &&
+                    validateMinMax($scope.form.height))) {
+                $scope.errors.push("All min/max fields must be numbers greater than 0");
+                valid = false;
+            }   
+            
+            return valid;
+        }
+        
+        var validateMinMax = function(obj) {
+            
+            var valid = true;
+            if(obj) {
+                if(obj.min) {
+                    valid = valid &&
+                            validateNumber(obj.min, -1);
+                }
+                if(obj.max) {
+                    valid = valid && 
+                            validateNumber(obj.max, -1);
+                }
+            }
+            
+            return valid;
+        }
+        
+        var validateNumber = function(number, minimum) {
+            
+            if (isNaN(number)) {
+                return false;
+            }
+            else if(number <= minimum)
+            {
+                return false;
+            }
+            
+            return true;
+        }
+        
+        var xor = function(a, b) {
+            return ( a || b ) && !( a && b );
+        }
     });
     
     app.service('FilterData', [function() 
@@ -66,7 +136,7 @@ define([
         
         this.count = function() {
             return this._objSize(this.width) + this._objSize(this.height) + 
-                    this._objSize(this.ar);
+                    (this.ar.width && this.ar.height ? 1 : 0);
         }
         
         this._objSize = function(obj) {

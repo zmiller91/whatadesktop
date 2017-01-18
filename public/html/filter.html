@@ -7,6 +7,20 @@
 
 <div id="filter" class="container-fluid modal-body">
             
+    <!-- Aspect Ratio -->
+    <div class="row">
+        <div class="col-sm-5">
+                <div class="filter-label">Aspect Ratio: </div>
+        </div>
+        <div class="col-sm-7 input-group">
+            <input type="text" class="form-control" id="arWidth"
+                    ng-model="form.ar.width">
+            <span class="input-group-addon" style="width:1%;">:</span>
+            <input type="text" class="form-control" id="arHeight"
+                    ng-model="form.ar.height">
+        </div>
+
+    </div>
 
     <!-- Width -->
     <div class="row">
@@ -55,25 +69,12 @@
             <span class="input-group-addon">px</span>
         </div>
     </div>
-
-    <!-- Aspect Ratio -->
-    <div class="row">
-        <div class="col-sm-12">
-            <h4><small><strong>OTHER</strong></small></h4>
+    
+    <!-- Errors -->
+    <div class="row" ng-repeat="e in errors track by $index">
+        <div class="col-sm-12 filter-error alert-danger">
+            {{e}}
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-5">
-                <div class="filter-label">Aspect Ratio: </div>
-        </div>
-        <div class="col-sm-7 input-group">
-            <input type="text" class="form-control" id="arWidth"
-                    ng-model="form.ar.width">
-            <span class="input-group-addon" style="width:1%;">:</span>
-            <input type="text" class="form-control" id="arHeight"
-                    ng-model="form.ar.height">
-        </div>
-
     </div>
             
 </div>
