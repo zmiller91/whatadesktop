@@ -29,7 +29,49 @@ class ImageTable extends BaseTable{
         return $sql;
     }
     
-    private function getNewRoots($limit, $iUser = -1)
+    private function createFilter($aFilter) {
+        if(!isset($aFilter)) {
+            return "";
+        }
+        
+        $aSqlFilter = array();
+        
+        // Width
+        if(!empty($aFilter["width"])) {
+            if(!empty($aFilter["width"]["min"])) {
+                array_push($aSqlFilter, "AND width >= " . $aFilter["width"]["min"]);
+            }
+            if(!empty($aFilter["width"]["max"])) {
+                array_push($aSqlFilter, "AND width <= " . $aFilter["width"]["max"]);
+            }
+        }
+        
+        // Height
+        if(!empty($aFilter["height"])) {
+            if(!empty($aFilter["height"]["min"])) {
+                array_push($aSqlFilter, "AND height >= " . $aFilter["height"]["min"]);
+            }
+            if(!empty($aFilter["height"]["max"])) {
+                array_push($aSqlFilter, "AND height <= " . $aFilter["height"]["max"]);
+            }
+        }
+        
+        // Aspect Ratio
+        if(!empty($aFilter["ar"])) {
+            if(!empty($aFilter["ar"]["width"]) && 
+                    !empty($aFilter["ar"]["height"])) {
+                
+                $width =  $aFilter["ar"]["width"];
+                $height =  $aFilter["ar"]["height"];
+                $ar = $width / $height;
+                array_push($aSqlFilter, "AND ROUND(width / height,1) = ROUND(" . $ar . ", 1)");
+            }
+        }
+        
+        return implode(" ", $aSqlFilter);
+    }
+    
+    private function getNewRoots($limit, $iUser = -1, $strFilter = "")
     {
         return
 <<<EOD
@@ -42,12 +84,13 @@ class ImageTable extends BaseTable{
                     or status = 1)
                     AND user = $iUser
             )
+                $strFilter
             ORDER BY id DESC
             LIMIT $limit;
 EOD;
     }
     
-    private function getRandomRoots($limit, $iUser = -1)
+    private function getRandomRoots($limit, $iUser = -1, $strFilter = "")
     {
         return
 <<<EOD
@@ -60,17 +103,22 @@ EOD;
                     OR status = 1)
                     AND user = $iUser
             )
+            $strFilter
             ORDER BY RAND()
             LIMIT $limit;
 EOD;
     }
     
-    private function getPopularRoots($limit)
+    private function getPopularRoots($limit, $strFilter = "")
     {
         return
 <<<EOD
             SELECT img_root as root
             FROM img_status
+            LEFT JOIN images 
+                ON img_status.img_root = images.root
+            WHERE 1 = 1
+            $strFilter
             GROUP BY img_root
             HAVING SUM(status) > 0
             ORDER BY SUM(status) DESC
@@ -78,12 +126,16 @@ EOD;
 EOD;
     }
     
-    private function getUnPopularRoots($limit)
+    private function getUnPopularRoots($limit, $strFilter = "")
     {
         return
 <<<EOD
             SELECT img_root as root
             FROM img_status
+            LEFT JOIN images 
+                ON img_status.img_root = images.root
+            WHERE 1 = 1
+            $strFilter
             GROUP BY img_root
             HAVING SUM(status) < 0
             ORDER BY SUM(status) ASC
@@ -111,25 +163,26 @@ EOD;
 EOD;
     }
     
-    public function getRoots($strSortMethod, $limit, $iUser = -1)
+    public function getRoots($strSortMethod, $limit, $iUser = -1, $aFilter = null)
     {
+        $strFilter = $this->createFilter($aFilter);
         $sql = "";
         switch($strSortMethod){
 
             case "new":
-                $sql = $this->getNewRoots($limit, $iUser);
+                $sql = $this->getNewRoots($limit, $iUser, $strFilter);
                 break;
 
             case "popular":
-                $sql = $this->getPopularRoots($limit);
+                $sql = $this->getPopularRoots($limit, $strFilter);
                 break;
 
             case "unpopular":
-                $sql = $this->getUnPopularRoots($limit);
+                $sql = $this->getUnPopularRoots($limit, $strFilter);
                 break;
 
             case "random":
-                $sql = $this->getRandomRoots($limit, $iUser);
+                $sql = $this->getRandomRoots($limit, $iUser, $strFilter);
                 break;
 
             case "saved":
@@ -141,28 +194,29 @@ EOD;
                 break;
             
             case "default":
-                $sql = $this->getRandomRoots($limit);
+                $sql = $this->getRandomRoots($limit, $strFilter);
         }
         
         $roots = $this->execute($sql);
         if(!in_array($strSortMethod, array("saved", "deleted"))
                 && sizeof($roots) < $limit)
         {
-            $more = $this->execute($this->getRandomRoots($limit - sizeof($roots), $iUser));
+            $more = $this->execute($this->getRandomRoots(
+                    $limit - sizeof($roots), $iUser, $strFilter));
             $roots = array_merge($roots, $more);
         }
         
         return $roots;
     }
     
-    public function getImageQueue($sort, $limit, $iUser = -1)
+    public function getImageQueue($sort, $limit, $iUser = -1, $aFilter = null)
     {
         if($iUser == null)
         {
             $iUser = -1;
         }
         
-        $roots = $this->getRoots($sort, $limit, $iUser);
+        $roots = $this->getRoots($sort, $limit, $iUser, $aFilter);
         if(empty($roots))
         {
             return array();
