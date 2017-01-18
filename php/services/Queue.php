@@ -73,11 +73,11 @@ class Queue extends Service
         $bSuccess = true;
         if(isset($aFilter["ar"])) {
             // If width exists then height must too, and vice versa
-            if(isset($aFilter["ar"]["width"]) xor isset($aFilter["ar"]["height"])) {
+            if(!empty($aFilter["ar"]["width"]) xor !empty($aFilter["ar"]["height"])) {
                 $this->m_oError->add("ar width and height must exist in ar filter");
                 $bSuccess = false;
             }
-            else if(isset($aFilter["ar"]["width"]) and isset($aFilter["ar"]["height"]))
+            else if(!empty($aFilter["ar"]["width"]) and !empty($aFilter["ar"]["height"]))
             {
                 // Width and height must be numeric
                 if(!is_numeric($aFilter["ar"]["width"]) && 
