@@ -35,6 +35,13 @@ define([
             $uibModalInstance.dismiss('cancel');
         };
         
+        $scope.clear = function () {
+            FilterData.width = {};
+            FilterData.height = {};
+            FilterData.ar = {};
+            $scope.errors = [];
+            $scope.form = FilterData.get();
+        }
         
         $scope.save = function()
         {
