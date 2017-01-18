@@ -139,7 +139,21 @@ define([
         // GET request to queue/:sort
         this.getQueue =  function(type, filter, success, error) 
         {
-            $this.get('/api/queue', {sort: type, filter: filter}, success, error);
+            var callback = function() {
+                if($this.carousel.count() === 0) {
+                    $this.carousel.add("default", [{
+                            height: "1080",
+                            width: "1920",
+                            path: "defaultbackground.jpg",
+                            root: "default",
+                            status: "0"
+                    }]);
+                }
+                
+                success();
+            };
+            
+            $this.get('/api/queue', {sort: type, filter: filter}, callback, error);
         };
 
         // GET request to image/:id
