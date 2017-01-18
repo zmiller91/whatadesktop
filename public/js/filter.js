@@ -85,7 +85,7 @@ define([
             // All other fields must be greater than or equal to 0
             if( !(validateMinMax($scope.form.width) &&
                     validateMinMax($scope.form.height))) {
-                $scope.errors.push("All min/max fields must be numbers greater than 0");
+                $scope.errors.push("All min/max fields must be numbers greater than or equal to 0");
                 valid = false;
             }   
             
